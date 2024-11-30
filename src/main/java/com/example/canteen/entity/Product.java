@@ -21,17 +21,17 @@ public class Product {
     private double sellPrice;
 
     @Column(name = "STATUS")
-    private String status;
+    private boolean status;
 
     @Column(name = "Category_ID")
     private String categoryId;
 
-    // No-args constructor (bắt buộc cho JPA)
+    // No-args constructor
     public Product() {
     }
 
     // Constructor với tham số đầy đủ
-    public Product(Long productId, String productName, int unit, double sellPrice, String status, String categoryId) {
+    public Product(Long productId, String productName, int unit, double sellPrice, Boolean status, String categoryId) {
         this.productId = productId;
         this.productName = productName;
         this.unit = unit;
@@ -39,6 +39,7 @@ public class Product {
         this.status = status;
         this.categoryId = categoryId;
     }
+
 
     // Getters và Setters
     public Long getProductId() {
@@ -73,11 +74,11 @@ public class Product {
         this.sellPrice = sellPrice;
     }
 
-    public String getStatus() {
+    public boolean isStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(boolean status) {
         this.status = status;
     }
 

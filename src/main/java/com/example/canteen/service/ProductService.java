@@ -1,53 +1,57 @@
 package com.example.canteen.service;
 
 import com.example.canteen.entity.Product;
+import com.example.canteen.exception.ResourceNotFoundException;
 import com.example.canteen.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-
 @Service
 public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
+    // Get all products
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
 
-    // Thêm mới sản phẩm
+    // Create a new product
     public Product createProduct(Product product) {
-        // Kiểm tra thông tin sản phẩm trước khi lưu
+        // Validate product name before saving
         if (product.getProductName() == null || product.getProductName().isEmpty()) {
-            throw new IllegalArgumentException("Product name cannot be empty");
+            throw new RuntimeException("Product name cannot be empty");
         }
         return productRepository.save(product);
     }
 
-    // Chỉnh sửa thông tin sản phẩm
+    // Update product details
     public Product updateProduct(Long productId, Product updatedProduct) {
+        // Kiểm tra xem sản phẩm có tồn tại không
         Product existingProduct = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId));
 
-        // Cập nhật các trường thông tin
+        // Cập nhật các chi tiết của sản phẩm
         existingProduct.setProductName(updatedProduct.getProductName());
         existingProduct.setUnit(updatedProduct.getUnit());
         existingProduct.setSellPrice(updatedProduct.getSellPrice());
-        existingProduct.setStatus(updatedProduct.getStatus());
+        existingProduct.setStatus(updatedProduct.isStatus());
         existingProduct.setCategoryId(updatedProduct.getCategoryId());
 
+        // Lưu và trả về sản phẩm đã được cập nhật
         return productRepository.save(existingProduct);
     }
 
-    // Xóa sản phẩm (ẩn sản phẩm)
-    public Product deleteProduct(Long productId) {
+    // Soft delete a product (set status to false)
+    public void deleteProduct(Long productId) {
+        // Kiểm tra xem sản phẩm có tồn tại không
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId));
 
-        // Ẩn sản phẩm thay vì xóa
-        //product.setDeleted(true);
-        return productRepository.save(product);
+        // Đánh dấu sản phẩm là đã xóa (soft delete)
+        product.setStatus(false);  // Đánh dấu trạng thái sản phẩm là "false" để soft delete
+        productRepository.save(product);  // Lưu thay đổi vào cơ sở dữ liệu
     }
 }

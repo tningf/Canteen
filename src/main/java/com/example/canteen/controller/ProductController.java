@@ -13,23 +13,24 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/products")
-    public class ProductController {
-        @Autowired
-        private ProductService productService;
+public class ProductController {
+    @Autowired
+    private ProductService productService;
 
-        @GetMapping
-        public List<Product> getAllProducts() {
-            return productService.getAllProducts().stream()
-                    .map(product -> new Product(
-                            product.getProductId(),
-                            product.getProductName(),
-                            product.getUnit(),
-                            product.getSellPrice(),
-                            product.getStatus(),
-                            product.getCategoryId()
-                    ))
-                    .collect(Collectors.toList());
-        }
+    @GetMapping
+    public List<Product> getAllProducts() {
+        return productService.getAllProducts().stream()
+                .filter(Product::isStatus)
+                .map(product -> new Product(
+                        product.getProductId(),
+                        product.getProductName(),
+                        product.getUnit(),
+                        product.getSellPrice(),
+                        product.isStatus(),
+                        product.getCategoryId()
+                ))
+                .collect(Collectors.toList());
+    }
 
     // Thêm mới sản phẩm
     @PostMapping
