@@ -31,11 +31,11 @@ public class UserService {
     }
 
     public String verify(User user) {
-        Authentication authenticantion =
+        Authentication authentication =
                 authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
-        if(authenticantion.isAuthenticated())
+        if(authentication.isAuthenticated())
             return jwtService.generateToken(user.getUsername());
-//        if(authenticantion.isAuthenticated())
+//        if(authentication.isAuthenticated())
 //            return "Success";
         return "Fail";
     }

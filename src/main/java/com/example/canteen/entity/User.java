@@ -1,12 +1,10 @@
 package com.example.canteen.entity;
 
-import com.example.canteen.entity.role.Role;
+
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+
 
 @Entity
 @Table(name = "tb_User")
