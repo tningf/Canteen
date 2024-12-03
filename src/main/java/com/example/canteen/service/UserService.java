@@ -22,7 +22,6 @@ public class UserService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
     public User register(User user){

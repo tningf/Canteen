@@ -17,10 +17,12 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    // GET
+    // Xem tất cả sản phẩm
     @GetMapping
     public List<Product> getAllProducts() {
         return productService.getAllProducts().stream()
-                .filter(Product::isStatus)
+                //.filter(Product::isStatus)
                 .map(product -> new Product(
                         product.getProductId(),
                         product.getProductName(),
@@ -32,24 +34,26 @@ public class ProductController {
                 .collect(Collectors.toList());
     }
 
-    // Thêm mới sản phẩm
+    // POST
+    // Tạo mới sản phẩm
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
         Product savedProduct = productService.createProduct(product);
         return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
     }
 
-    // Chỉnh sửa sản phẩm
+    // PUT
+    // Chỉnh sửa sản phẩm theo ID
     @PutMapping("/{productId}")
     public ResponseEntity<Product> updateProduct(@PathVariable Long productId, @RequestBody Product updatedProduct) {
         Product updated = productService.updateProduct(productId, updatedProduct);
         return new ResponseEntity<>(updated, HttpStatus.OK);
     }
-
-    // Xóa sản phẩm (ẩn sản phẩm)
+    // DELETE
+    // Xóa mềm sản phẩm
     @DeleteMapping("/{productId}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long productId) {
         productService.deleteProduct(productId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);  // Trả về 204 No Content khi thành công
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);  // HTTP Code 204: No Content
     }
 }

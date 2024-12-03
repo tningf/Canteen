@@ -13,12 +13,12 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
-    // Get all products
+    // Danh sách tất cả sản phẩm
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
 
-    // Create a new product
+    // Tạo mới sản phẩm
     public Product createProduct(Product product) {
         // Validate product name before saving
         if (product.getProductName() == null || product.getProductName().isEmpty()) {
@@ -27,7 +27,7 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    // Update product details
+    // Cập nhật sản phẩm
     public Product updateProduct(Long productId, Product updatedProduct) {
         // Kiểm tra xem sản phẩm có tồn tại không
         Product existingProduct = productRepository.findById(productId)
@@ -44,14 +44,14 @@ public class ProductService {
         return productRepository.save(existingProduct);
     }
 
-    // Soft delete a product (set status to false)
+    // Xóa mềm sản phẩm
     public void deleteProduct(Long productId) {
         // Kiểm tra xem sản phẩm có tồn tại không
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId));
 
-        // Đánh dấu sản phẩm là đã xóa (soft delete)
-        product.setStatus(false);  // Đánh dấu trạng thái sản phẩm là "false" để soft delete
+        // Đánh dấu trạng thái sản phẩm là "false" để soft delete
+        product.setStatus(false);
         productRepository.save(product);  // Lưu thay đổi vào cơ sở dữ liệu
     }
 }
