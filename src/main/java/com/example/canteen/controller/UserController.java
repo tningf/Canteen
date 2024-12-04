@@ -6,8 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 public class UserController {
@@ -20,7 +23,24 @@ public class UserController {
         return userService.register(user);
     }
     @PostMapping("/login")
-    public String login(@RequestBody User user){
-        return userService.verify(user);
+    public ResponseEntity<Map<String, Object>> login(@RequestBody User user) {
+        try {
+            // Authenticate and generate the token
+            String token = userService.verify(user);
+
+            // Create the response map
+            Map<String, Object> response = new HashMap<>();
+            response.put("accessToken", token);
+
+            return ResponseEntity.ok(response);
+        } catch (ResponseStatusException ex) {
+            // Create error response
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", ex.getReason());
+
+            return ResponseEntity.status(ex.getStatusCode()).body(response);
+        }
     }
+
+
 }

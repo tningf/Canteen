@@ -24,7 +24,7 @@ public class PatientController {
     public ResponseEntity<Map<String, String>> login(@RequestParam String cardNumber) {
         String token = patientService.loginByCardNumber(cardNumber);
         Map<String, String> response = new HashMap<>();
-        response.put("token", token);
+        response.put("accessToken", token);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @GetMapping
