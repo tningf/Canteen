@@ -22,7 +22,7 @@ public class ProductController {
     @GetMapping
     public List<Product> getAllProducts() {
         return productService.getAllProducts().stream()
-                //.filter(Product::isStatus)
+                .filter(Product::isStatus)
                 .map(product -> new Product(
                         product.getProductId(),
                         product.getProductName(),
@@ -38,7 +38,7 @@ public class ProductController {
     // Tạo mới sản phẩm
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-        Product savedProduct = productService.createProduct(product);
+        Product savedProduct = productService.addProduct(product);
         return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
     }
 
@@ -54,6 +54,6 @@ public class ProductController {
     @DeleteMapping("/{productId}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long productId) {
         productService.deleteProduct(productId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);  // HTTP Code 204: No Content
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

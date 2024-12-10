@@ -8,6 +8,6 @@ import java.util.Optional;
 
 
 @Repository
-public interface PatientRepository extends JpaRepository<Patient, Integer> {
+public interface PatientRepository extends JpaRepository<Patient, String> {
     Optional<Patient> findByCardNumber(String cardNumber);
 }

@@ -1,5 +1,6 @@
 package com.example.canteen.controller;
 
+import com.example.canteen.config.ApiResponse;
 import com.example.canteen.entity.Patient;
 import com.example.canteen.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +28,11 @@ public class PatientController {
         response.put("accessToken", token);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    @GetMapping
-    public ResponseEntity<List<Patient>> getAllPatients() {
-        List<Patient> patients = patientService.getAllPatients();
-        return new ResponseEntity<>(patients, HttpStatus.OK);
+    @GetMapping("/myinfo")
+    public ApiResponse<Patient> myInfo(){
+        return ApiResponse.<Patient>builder()
+                .code(1000)
+                .data(patientService.getMyInfo())
+                .build();
     }
 }

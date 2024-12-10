@@ -1,5 +1,6 @@
 package com.example.canteen.service;
 
+import com.example.canteen.entity.Patient;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -19,7 +20,7 @@ import java.util.function.Function;
 @Service
 public class JWTService {
 
-    private String secretKey = "";
+    private String secretKey = "PhanmemCanteen@2024";
 
     public JWTService(){
         try {
@@ -67,9 +68,14 @@ public class JWTService {
                 .getPayload();
     }
 
-    public boolean validateToken(String token, UserDetails userDetails) {
-        final String userName = extractUserName(token);
-        return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    public boolean validateToken(String token, Object user) {
+        final String username = extractUserName(token);
+        if (user instanceof UserDetails) {
+            return username.equals(((UserDetails) user).getUsername()) && !isTokenExpired(token);
+        } else if (user instanceof Patient) {
+            return username.equals(((Patient) user).getCardNumber()) && !isTokenExpired(token);
+        }
+        return false;
     }
 
     private boolean isTokenExpired(String token) {

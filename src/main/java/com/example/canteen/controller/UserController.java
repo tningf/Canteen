@@ -1,9 +1,12 @@
 package com.example.canteen.controller;
 
+import com.example.canteen.config.ApiResponse;
+import com.example.canteen.dto.respone.UserResponse;
 import com.example.canteen.entity.User;
 import com.example.canteen.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,5 +45,16 @@ public class UserController {
         }
     }
 
+    @PostMapping("/create_user")
+    public User createUser(@RequestBody User user) {
+        return userService.createUser(user);
+    }
 
+    @GetMapping("/myinfo")
+    public ApiResponse<UserResponse> myInfo() {
+        return ApiResponse.<UserResponse>builder()
+                .code(1000)
+                .data(userService.getMyInfo())
+                .build();
+    }
 }
