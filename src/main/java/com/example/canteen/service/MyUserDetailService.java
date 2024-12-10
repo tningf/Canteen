@@ -1,6 +1,4 @@
 package com.example.canteen.service;
-import com.example.canteen.entity.Patient;
-import com.example.canteen.entity.PatientPrincipal;
 import com.example.canteen.entity.User;
 import com.example.canteen.entity.UserPrincipal;
 import com.example.canteen.repository.PatientRepository;
@@ -16,9 +14,6 @@ public class MyUserDetailService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private PatientRepository patientRepository;
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username).

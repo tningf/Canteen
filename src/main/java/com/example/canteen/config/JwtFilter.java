@@ -1,10 +1,8 @@
 package com.example.canteen.config;
 
-import com.example.canteen.entity.Patient;
 import com.example.canteen.service.JWTService;
 import com.example.canteen.service.MyUserDetailService;
 import com.example.canteen.service.PatientDetailsService;
-import com.example.canteen.service.PatientService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
