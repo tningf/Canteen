@@ -43,10 +43,11 @@ public class SecurityConfig {
                         .requestMatchers("register","login","patients", "patients/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "products/**").permitAll()
                         .anyRequest().authenticated())
-                .httpBasic(Customizer.withDefaults())
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(new JwtAuthenticationEntryPoint()))
                 .sessionManagement(session ->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .cors(Customizer.withDefaults())
+
                 .build();
         //        http.formLogin(Customizer.withDefaults());
     }
