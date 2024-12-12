@@ -102,12 +102,6 @@
             <artifactId>mapstruct</artifactId>
             <version>${org.mapstruct.version}</version>
         </dependency>
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>s3</artifactId>
-            <version>2.29.31</version>
-        </dependency>
-
     </dependencies>
 
     <build>

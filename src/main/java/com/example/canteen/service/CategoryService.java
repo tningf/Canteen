@@ -31,6 +31,10 @@ public class CategoryService {
     public Category addCategory(Category category) {
         return Optional.of(category)
                 .filter(cat -> !categoryRepository.existsByName(cat.getName()))
+                .map(cat -> {
+                    cat.setStatus(true);
+                    return cat;
+                })
                 .map(categoryRepository::save)
                 .orElseThrow(() -> new AppExeception(ErrorCode.CATEGORY_ALREADY_EXISTS));
     }
