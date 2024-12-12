@@ -1,6 +1,6 @@
 package com.example.canteen.exception;
 
-import com.example.canteen.config.ApiResponse;
+import com.example.canteen.dto.respone.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,11 +17,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(errorCode.getHttpStatusCode()).body(apiResponse);
     }
 
-    @ExceptionHandler(value = Exception.class)
-    ResponseEntity<ApiResponse> handleGenericException(Exception exception) {
-        ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setCode(ErrorCode.UNKNOWN.getCode());
-        apiResponse.setMessage(ErrorCode.UNKNOWN.getMessage());
-        return ResponseEntity.badRequest().body(apiResponse);
-    }
+//    @ExceptionHandler(value = Exception.class)
+//    ResponseEntity<ApiResponse> handleGenericException(Exception exception) {
+//        ApiResponse apiResponse = new ApiResponse();
+//        apiResponse.setCode(ErrorCode.UNKNOWN.getCode());
+//        apiResponse.setMessage(ErrorCode.UNKNOWN.getMessage());
+//        return ResponseEntity.badRequest().body(apiResponse);
+//    }
 }

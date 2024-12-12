@@ -1,5 +1,6 @@
 package com.example.canteen.config;
 
+import com.example.canteen.dto.respone.ApiResponse;
 import com.example.canteen.exception.ErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
@@ -20,7 +21,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setStatus(errorCode.getHttpStatusCode().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
-        ApiResponse<?> apiResponse = ApiResponse.builder()
+        ApiResponse apiResponse = ApiResponse.builder()
                 .code(errorCode.getCode())
                 .message(errorCode.getMessage())
                 .build();

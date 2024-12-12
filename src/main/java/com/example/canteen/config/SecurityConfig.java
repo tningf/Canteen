@@ -40,8 +40,9 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests ->requests
-                        .requestMatchers("register","login","patients", "patients/login").permitAll()
-                        .requestMatchers(HttpMethod.GET, "products/**").permitAll()
+                        .requestMatchers("/register","/login","/patients", "/patients/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/images/**").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(new JwtAuthenticationEntryPoint()))
                 .sessionManagement(session ->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

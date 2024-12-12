@@ -1,92 +1,49 @@
 package com.example.canteen.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.util.List;
+
+
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "tb_Product")
 public class Product {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Product_ID")
-    private Long productId;
+    private Long id;
 
-    @Column(name = "ProductName")
-    private String productName;
+    @Column(name = "ProductName",columnDefinition = "NVARCHAR(255)")
+    private String name;
 
     @Column(name = "Unit")
     private int unit;
 
     @Column(name = "SellPrice")
-    private double sellPrice;
+    private double price;
 
     @Column(name = "STATUS")
     private boolean status;
 
-    @Column(name = "Category_ID")
-    private String categoryId;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "Category_ID")
+    private Category category;
 
-    // No-args constructor
-    public Product() {
-    }
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Image> images;
 
-    // Constructor với tham số đầy đủ
-    public Product(Long productId, String productName, int unit, double sellPrice, Boolean status, String categoryId) {
-        this.productId = productId;
-        this.productName = productName;
+    public Product(String name, int unit, double price, boolean status, Category category) {
+        this.name = name;
         this.unit = unit;
-        this.sellPrice = sellPrice;
+        this.price = price;
         this.status = status;
-        this.categoryId = categoryId;
+        this.category = category;
     }
 
-
-    // Getters và Setters
-    public Long getProductId() {
-        return productId;
-    }
-
-    public void setProductId(Long productId) {
-        this.productId = productId;
-    }
-
-    public String getProductName() {
-        return productName;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
-
-    public int getUnit() {
-        return unit;
-    }
-
-    public void setUnit(int unit) {
-        this.unit = unit;
-    }
-
-    public double getSellPrice() {
-        return sellPrice;
-    }
-
-    public void setSellPrice(double sellPrice) {
-        this.sellPrice = sellPrice;
-    }
-
-    public boolean isStatus() {
-        return status;
-    }
-
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
-
-    public String getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
-    }
 }

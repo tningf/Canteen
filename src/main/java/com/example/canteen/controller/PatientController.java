@@ -1,6 +1,6 @@
 package com.example.canteen.controller;
 
-import com.example.canteen.config.ApiResponse;
+import com.example.canteen.dto.respone.ApiResponse;
 import com.example.canteen.entity.Patient;
 import com.example.canteen.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -29,8 +28,8 @@ public class PatientController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @GetMapping("/myinfo")
-    public ApiResponse<Patient> myInfo(){
-        return ApiResponse.<Patient>builder()
+    public ApiResponse myInfo(){
+        return ApiResponse.builder()
                 .code(1000)
                 .data(patientService.getMyInfo())
                 .build();

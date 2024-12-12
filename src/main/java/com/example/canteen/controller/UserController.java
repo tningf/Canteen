@@ -1,6 +1,6 @@
 package com.example.canteen.controller;
 
-import com.example.canteen.config.ApiResponse;
+import com.example.canteen.dto.respone.ApiResponse;
 import com.example.canteen.dto.respone.UserResponse;
 import com.example.canteen.entity.User;
 import com.example.canteen.service.UserService;
@@ -51,8 +51,8 @@ public class UserController {
     }
 
     @GetMapping("/myinfo")
-    public ApiResponse<UserResponse> myInfo() {
-        return ApiResponse.<UserResponse>builder()
+    public ApiResponse myInfo() {
+        return ApiResponse.builder()
                 .code(1000)
                 .data(userService.getMyInfo())
                 .build();
