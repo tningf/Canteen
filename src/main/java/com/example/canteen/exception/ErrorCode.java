@@ -17,12 +17,13 @@ public enum ErrorCode {
     UNAUTHORIZED(1004, "Bạn không có quyền truy cập!", HttpStatus.FORBIDDEN),
 
     PRODUCT_NOT_FOUND(2001, "Sản phẩm không tồn tại!", HttpStatus.NOT_FOUND),
-
+    PRODUCT_ALREADY_EXISTS(2002, "Sản phẩm đã tồn tại!", HttpStatus.CONFLICT),
     CATEGORY_NOT_FOUND(3001,"Không tìm thấy danh mục sản phẩm!" ,HttpStatus.NOT_FOUND),
     CATEGORY_ALREADY_EXISTS(3002,"Danh mục sản phẩm này đã tồn tại!" ,HttpStatus.CONFLICT),
 
     IMAGE_NOT_FOUND(4001,"Không tìm thấy hình ảnh" ,HttpStatus.NOT_FOUND),
-    FAIL_TO_UPLOAD_IMAGE(4002,"Không thể tải ảnh lên" ,HttpStatus.INTERNAL_SERVER_ERROR);
+    FAIL_TO_UPLOAD_IMAGE(4002,"Không thể tải ảnh lên" ,HttpStatus.INTERNAL_SERVER_ERROR),
+    ;
 
 
     private int code;

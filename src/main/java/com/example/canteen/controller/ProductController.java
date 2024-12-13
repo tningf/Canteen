@@ -23,7 +23,7 @@ public class ProductController {
     // Xem tất cả sản phẩm
     @GetMapping
     public ResponseEntity<ApiResponse> getAllProducts() {
-        List<Product> products = productService.getAllProducts();
+        List<Product> products = productService.getAllActiveProducts();
         List<ProductDto> convertedProducts = productService.getConvertProducts(products);
         return ResponseEntity.ok(new ApiResponse(1000, "Success", convertedProducts));
     }

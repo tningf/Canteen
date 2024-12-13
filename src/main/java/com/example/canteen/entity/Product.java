@@ -1,5 +1,7 @@
 package com.example.canteen.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,7 +25,7 @@ public class Product {
     private String name;
 
     @Column(name = "Unit")
-    private int unit;
+    private String unit;
 
     @Column(name = "SellPrice")
     private double price;
@@ -36,9 +38,14 @@ public class Product {
     private Category category;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Stock> stocks;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images;
 
-    public Product(String name, int unit, double price, boolean status, Category category) {
+
+
+    public Product(String name, String unit, double price, boolean status, Category category) {
         this.name = name;
         this.unit = unit;
         this.price = price;

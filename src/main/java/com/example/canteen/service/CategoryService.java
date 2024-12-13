@@ -27,6 +27,9 @@ public class CategoryService {
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
+    public List<Category> getAllActiveCategories() {
+        return categoryRepository.findAllByStatusTrue();
+    }
 
     public Category addCategory(Category category) {
         return Optional.of(category)

@@ -2,18 +2,22 @@ package com.example.canteen.service;
 
 import com.example.canteen.dto.ImageDto;
 import com.example.canteen.dto.ProductDto;
+import com.example.canteen.dto.StockDto;
 import com.example.canteen.dto.request.AddProductRequest;
 import com.example.canteen.dto.request.UpdateProductRequest;
 import com.example.canteen.entity.Category;
 import com.example.canteen.entity.Image;
 import com.example.canteen.entity.Product;
+import com.example.canteen.entity.Stock;
 import com.example.canteen.exception.AppExeception;
 import com.example.canteen.exception.ErrorCode;
 import com.example.canteen.mapper.ImageMapper;
 import com.example.canteen.mapper.ProductMapper;
+import com.example.canteen.mapper.StockMapper;
 import com.example.canteen.repository.CategoryRepository;
 import com.example.canteen.repository.ImageRepository;
 import com.example.canteen.repository.ProductRepository;
+import com.example.canteen.repository.StockRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,8 +30,10 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final ImageRepository imageRepository;
+    private final StockRepository stockRepository;
     private final ProductMapper productMapper;
     private final ImageMapper imageMapper;
+    private final StockMapper stockMapper;
 
     // Add a new product
     public Product addProduct(AddProductRequest request) {
@@ -54,7 +60,6 @@ public class ProductService {
                 category
         );
     }
-
 
     // Get a product by id
     public Product getProductById(Long productId) {
@@ -94,9 +99,14 @@ public class ProductService {
     }
 
     // Get all products
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+//    public List<Product> getAllProducts() {
+//        return productRepository.findAll();
+//    }
+    //Get all products with status true
+    public List<Product> getAllActiveProducts() {
+        return productRepository.findAllByStatusTrue();
     }
+
     // Get all products by category
     public List<Product> getProductByCategory(String category) {
         List<Product> products = productRepository.findByCategoryName(category);
@@ -114,11 +124,17 @@ public class ProductService {
 
     public ProductDto covertToDto(Product product) {
         ProductDto productDto = productMapper.toProductDto(product);
+
+        Stock stock = stockRepository.findByProductId(product.getId());
+        StockDto stockDto = stockMapper.toStockDto(stock);
+        productDto.setStock(stockDto);
+
         List<Image> images = imageRepository.findByProductId(product.getId());
         List<ImageDto> imageDtos = images.stream()
                 .map(imageMapper::toImageDto)
                 .toList();
         productDto.setImages(imageDtos);
+
         return productDto;
     }
 }

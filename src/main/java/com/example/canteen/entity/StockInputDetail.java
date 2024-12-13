@@ -4,23 +4,27 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
 @Table(name = "tb_StockInputDetail")
-public class CartInputDetail {
+public class StockInputDetail {
     @Id
     @Column(name = "StockInputDetail_ID")
-    private int cartInputDetailId;
+    private Long stockInputDetailId;
     @Column(name = "StockInput_ID")
-    private int cartInputId;
+    private Long stockInputId;
     @Column(name = "Product_ID")
-    private int productId;
+    private Long productId;
     @Column(name = "Quantity")
     private int quantity;
     @Column(name = "PriceInput")
-    private int priceInput;
+    private double priceInput;
 }
