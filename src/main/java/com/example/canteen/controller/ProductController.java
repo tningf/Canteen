@@ -7,6 +7,7 @@ import com.example.canteen.dto.StockDto;
 import com.example.canteen.dto.request.AddProductRequest;
 import com.example.canteen.dto.request.UpdateProductRequest;
 import com.example.canteen.dto.respone.ApiResponse;
+import com.example.canteen.entity.Image;
 import com.example.canteen.entity.Product;
 import com.example.canteen.exception.AppExeception;
 import com.example.canteen.exception.ErrorCode;
@@ -84,9 +85,25 @@ public class ProductController {
     // PUT
     // Cập nhật sản phẩm theo ID
     @PutMapping("/{productId}")
-    public ResponseEntity<ApiResponse> updateProduct(@RequestBody UpdateProductRequest request, @PathVariable Long productId) {
+    public ResponseEntity<ApiResponse> updateProduct(@ModelAttribute UpdateProductRequest request, @PathVariable Long productId) {
         Product theProduct = productService.updateProduct(request, productId);
         ProductDto productDto = productService.covertToDto(theProduct);
+
+        MultipartFile imageFile = request.getImage();
+        if (imageFile != null && !imageFile.isEmpty()) {
+            try {
+                // Cập nhật ảnh mới
+                Image currentImage = imageService.getImageByProductId(productId); // Lấy ảnh hiện tại
+                if (currentImage != null) {
+                    imageService.updateImage(imageFile, currentImage.getId());
+                } else {
+                    // Nếu chưa có ảnh, thêm ảnh mới
+                    imageService.saveImages(List.of(imageFile), productId);
+                }
+            } catch (RuntimeException e) {
+                throw new AppExeception(ErrorCode.FAIL_TO_UPLOAD_IMAGE);
+            }
+        }
         return ResponseEntity.ok(new ApiResponse(1000, "Cập nhật thành công", productDto));
     }
     // DELETE

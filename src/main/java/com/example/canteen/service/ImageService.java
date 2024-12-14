@@ -81,4 +81,10 @@ public class ImageService {
             throw new RuntimeException(e.getMessage());
         }
     }
+
+    public Image getImageByProductId(Long productId) {
+        return imageRepository.findByProductId(productId).stream()
+                .findFirst()
+                .orElseThrow(() -> new AppExeception(ErrorCode.IMAGE_NOT_FOUND));
+    }
 }

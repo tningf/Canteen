@@ -21,7 +21,9 @@ public class CategoryService {
     }
 
     public Category getCategoryByName(String name) {
-        return categoryRepository.findByName(name);
+
+        return Optional.ofNullable(categoryRepository.findByName(name))
+                .orElseThrow(() -> new AppExeception(ErrorCode.CATEGORY_NOT_FOUND));
     }
 
     public List<Category> getAllCategories() {
