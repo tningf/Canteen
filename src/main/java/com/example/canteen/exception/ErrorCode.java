@@ -23,7 +23,12 @@ public enum ErrorCode {
 
     IMAGE_NOT_FOUND(4001,"Không tìm thấy hình ảnh" ,HttpStatus.NOT_FOUND),
     FAIL_TO_UPLOAD_IMAGE(4002,"Không thể tải ảnh lên" ,HttpStatus.INTERNAL_SERVER_ERROR),
-    ;
+
+    CART_NOT_FOUND(5001,"Không tìm thấy giỏ hàng", HttpStatus.NOT_FOUND),
+    CART_ALREADY_EXISTS(5002,"Giỏ hàng đã tồn tại", HttpStatus.CONFLICT),
+    CART_ITEM_NOT_FOUND(5003,"Không tìm thấy sản phẩm trong giỏ hàng", HttpStatus.NOT_FOUND),
+    CART_ITEM_ALREADY_EXISTS(5004,"Sản phẩm đã tồn tại trong giỏ hàng", HttpStatus.CONFLICT),;
+
 
 
     private int code;

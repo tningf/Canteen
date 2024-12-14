@@ -1,12 +1,11 @@
 package com.example.canteen.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -15,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "tb_Product")
-public class Product {
+public class Product{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Product_ID")
@@ -24,11 +23,11 @@ public class Product {
     @Column(name = "ProductName",columnDefinition = "NVARCHAR(255)")
     private String name;
 
-    @Column(name = "Unit")
+    @Column(name = "Unit", columnDefinition = "NVARCHAR(255)")
     private String unit;
 
     @Column(name = "SellPrice")
-    private double price;
+    private BigDecimal price;
 
     @Column(name = "STATUS")
     private boolean status;
@@ -45,7 +44,7 @@ public class Product {
 
 
 
-    public Product(String name, String unit, double price, boolean status, Category category) {
+    public Product(String name, String unit, BigDecimal price, boolean status, Category category) {
         this.name = name;
         this.unit = unit;
         this.price = price;

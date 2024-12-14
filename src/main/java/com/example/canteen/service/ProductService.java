@@ -21,6 +21,7 @@ import com.example.canteen.repository.StockRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.sql.Blob;
 import java.util.List;
 import java.util.Optional;
 @Service
@@ -35,7 +36,7 @@ public class ProductService {
     private final ImageMapper imageMapper;
     private final StockMapper stockMapper;
 
-    // Add a new product
+    //Add a new product
     public Product addProduct(AddProductRequest request) {
         // Check if the category is found in the database
         // If Yes, set it as the new product category
@@ -51,6 +52,7 @@ public class ProductService {
         request.setCategory(category);
         return productRepository.save(createProduct(request, category));
     }
+
     private Product createProduct(AddProductRequest request, Category category) {
         return new Product(
                 request.getName(),

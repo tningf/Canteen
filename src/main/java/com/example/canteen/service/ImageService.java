@@ -50,9 +50,10 @@ public class ImageService {
                 image.setProduct(product);
 
                 String buildDownloadUrl = "/images/image/download/";
+                Image savedImage = imageRepository.save(image);
                 String downloadUrl = buildDownloadUrl + image.getId();
                 image.setDownloadUrl(downloadUrl);
-                Image savedImage = imageRepository.save(image);
+                imageRepository.save(savedImage);
                 savedImage.setDownloadUrl(buildDownloadUrl + savedImage.getId());
                 imageRepository.save(savedImage);
 

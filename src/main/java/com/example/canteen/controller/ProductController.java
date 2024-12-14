@@ -1,15 +1,22 @@
 package com.example.canteen.controller;
 
 
+import com.example.canteen.dto.ImageDto;
 import com.example.canteen.dto.ProductDto;
+import com.example.canteen.dto.StockDto;
 import com.example.canteen.dto.request.AddProductRequest;
 import com.example.canteen.dto.request.UpdateProductRequest;
 import com.example.canteen.dto.respone.ApiResponse;
 import com.example.canteen.entity.Product;
+import com.example.canteen.exception.AppExeception;
+import com.example.canteen.exception.ErrorCode;
+import com.example.canteen.service.ImageService;
 import com.example.canteen.service.ProductService;
+import com.example.canteen.service.StockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -18,6 +25,8 @@ import java.util.List;
 @RequestMapping("/products")
 public class ProductController {
     private final ProductService productService;
+    private final ImageService imageService;
+    private final StockService stockService;
 
     // GET
     // Xem tất cả sản phẩm
@@ -25,7 +34,10 @@ public class ProductController {
     public ResponseEntity<ApiResponse> getAllProducts() {
         List<Product> products = productService.getAllActiveProducts();
         List<ProductDto> convertedProducts = productService.getConvertProducts(products);
-        return ResponseEntity.ok(new ApiResponse(1000, "Success", convertedProducts));
+        return ResponseEntity.ok(ApiResponse.builder()
+                .message("Lấy dữ liệu thành công")
+                .data(convertedProducts)
+                .build());
     }
     // Xem sản phẩm theo ID
     @GetMapping("/{id}")
@@ -45,9 +57,27 @@ public class ProductController {
     // POST
     // Tạo mới sản phẩm
     @PostMapping
-    public ResponseEntity<ApiResponse> createProduct(@RequestBody AddProductRequest product) {
+    public ResponseEntity<ApiResponse> createProduct(@ModelAttribute AddProductRequest product) {
+        // Thêm sản phẩm
         Product savedProduct = productService.addProduct(product);
+
+        // Chuyển đổi sang DTO
         ProductDto productDto = productService.covertToDto(savedProduct);
+
+        // Thêm kho
+        StockDto stock = stockService.addStock(savedProduct.getId(), product.getQuantity());
+        productDto.setStock(stock);
+
+        List<MultipartFile> images = product.getImages();
+        if (images != null && !images.isEmpty()) {
+            try {
+                // Lưu danh sách ảnh
+                List<ImageDto> imageDtos = imageService.saveImages(images, savedProduct.getId());
+                productDto.setImages(imageDtos);
+            } catch (RuntimeException e) {
+                throw new AppExeception(ErrorCode.FAIL_TO_UPLOAD_IMAGE);
+            }
+        }
         return ResponseEntity.ok(new ApiResponse(1000, "Thêm thành công!", productDto));
     }
 

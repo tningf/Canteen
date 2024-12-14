@@ -4,6 +4,8 @@ import com.example.canteen.entity.Category;
 import com.example.canteen.entity.Stock;
 import lombok.Data;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -11,7 +13,7 @@ public class ProductDto {
     private Long id;
     private String name;
     private String unit;
-    private double price;
+    private BigDecimal price;
     private boolean status;
     private Category category;
     private StockDto stock;
