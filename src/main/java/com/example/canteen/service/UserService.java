@@ -1,9 +1,9 @@
 package com.example.canteen.service;
 
-import com.example.canteen.dto.respone.UserResponse;
+import com.example.canteen.dto.UserDto;
 import com.example.canteen.entity.User;
 import com.example.canteen.exception.AppExeception;
-import com.example.canteen.exception.ErrorCode;
+import com.example.canteen.enums.ErrorCode;
 import com.example.canteen.mapper.UserMapper;
 import com.example.canteen.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +47,7 @@ public class UserService {
 
     public User createUser(User user){
         if(userRepository.existsByUsername(user.getUsername()))
-            throw new AppExeception(ErrorCode.USER_EXITED);
+            throw new AppExeception(ErrorCode.USER_ALREADY_EXISTS);
         user.setUsername(user.getUsername());
         user.setPassword(encoder.encode(user.getPassword()));
         user.setFullName(user.getFullName());
@@ -71,7 +71,7 @@ public class UserService {
         throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication failed");
     }
 
-    public UserResponse getMyInfo(){
+    public UserDto getMyInfo(){
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
         User user = userRepository.findByUsername(name)

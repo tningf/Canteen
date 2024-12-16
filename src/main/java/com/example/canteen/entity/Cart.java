@@ -19,7 +19,7 @@ import java.util.Set;
 public class Cart {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Cart_ID")
     private Long id;
 
@@ -29,6 +29,9 @@ public class Cart {
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CartItem> items = new HashSet<>();
 
+    @OneToOne
+    @JoinColumn(name = "Patient_ID")
+    private Patient patient;
 
     public void addItem(CartItem item) {
         this.items.add(item);

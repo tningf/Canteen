@@ -1,7 +1,6 @@
 package com.example.canteen.controller;
 
 import com.example.canteen.dto.respone.ApiResponse;
-import com.example.canteen.dto.respone.UserResponse;
 import com.example.canteen.entity.User;
 import com.example.canteen.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

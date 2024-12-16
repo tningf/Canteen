@@ -5,7 +5,7 @@ import com.example.canteen.entity.Cart;
 import com.example.canteen.entity.CartItem;
 import com.example.canteen.entity.Product;
 import com.example.canteen.exception.AppExeception;
-import com.example.canteen.exception.ErrorCode;
+import com.example.canteen.enums.ErrorCode;
 import com.example.canteen.repository.CartItemRepository;
 import com.example.canteen.repository.CartRepository;
 import lombok.RequiredArgsConstructor;
@@ -69,7 +69,11 @@ public class CartItemService {
                     item.setUnitPrice(item.getProduct().getPrice());
                     item.setTotalPrice();
                 });
-        BigDecimal totalAmount = cart.getTotalAmount();
+        BigDecimal totalAmount = cart.getItems()
+                .stream()
+                .map(CartItem::getTotalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
         cart.setTotalAmount(totalAmount);
         cartRepository.save(cart);
     }

@@ -36,8 +36,9 @@ public class Product{
     @JoinColumn(name = "Category_ID")
     private Category category;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Stock> stocks;
+    @OneToOne
+    @JoinColumn(name = "Product_ID")
+    private Stock stock;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images;

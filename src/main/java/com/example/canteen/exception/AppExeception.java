@@ -1,5 +1,6 @@
 package com.example.canteen.exception;
 
+import com.example.canteen.enums.ErrorCode;
 import lombok.Getter;
 import lombok.Setter;
 

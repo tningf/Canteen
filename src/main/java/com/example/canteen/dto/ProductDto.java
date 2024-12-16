@@ -1,10 +1,8 @@
 package com.example.canteen.dto;
 
 import com.example.canteen.entity.Category;
-import com.example.canteen.entity.Stock;
 import lombok.Data;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 

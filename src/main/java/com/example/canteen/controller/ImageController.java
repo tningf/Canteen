@@ -4,7 +4,7 @@ package com.example.canteen.controller;
 import com.example.canteen.dto.ImageDto;
 import com.example.canteen.dto.respone.ApiResponse;
 import com.example.canteen.entity.Image;
-import com.example.canteen.exception.ErrorCode;
+import com.example.canteen.enums.ErrorCode;
 import com.example.canteen.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;

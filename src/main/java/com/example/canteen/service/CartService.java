@@ -2,13 +2,13 @@ package com.example.canteen.service;
 
 
 import com.example.canteen.entity.Cart;
-import com.example.canteen.entity.CartItem;
 import com.example.canteen.exception.AppExeception;
-import com.example.canteen.exception.ErrorCode;
+import com.example.canteen.enums.ErrorCode;
 import com.example.canteen.repository.CartItemRepository;
 import com.example.canteen.repository.CartRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicLong;
@@ -29,6 +29,7 @@ public class CartService {
         return cartRepository.save(cart);
     }
 
+    @Transactional
     public void clearCart(Long id){
         Cart cart = getCart(id);
         if (cart.getItems().isEmpty()) {
@@ -49,9 +50,17 @@ public class CartService {
 
     public Long initializeNewCart() {
         Cart newCart = new Cart();
-//        Long newCartId = cartIdGenerator.incrementAndGet();
-//        newCart.setId(newCartId);
+        Long newCartId = cartIdGenerator.incrementAndGet();
+        newCart.setId(newCartId);
         return cartRepository.save(newCart).getId();
 
+    }
+
+    public Cart getCartByPatientId(Long patientId) {
+        Cart cart = cartRepository.findByPatientId(patientId);
+        if (cart == null) {
+            throw new AppExeception(ErrorCode.CART_NOT_FOUND);
+        }
+        return cart;
     }
 }

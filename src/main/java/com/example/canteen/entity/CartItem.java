@@ -35,6 +35,7 @@ public class CartItem {
     @JoinColumn(name = "Product_ID")
     private Product product;
 
+    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "Cart_ID")
     private Cart cart;

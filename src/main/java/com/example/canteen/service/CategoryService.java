@@ -2,7 +2,7 @@ package com.example.canteen.service;
 
 import com.example.canteen.entity.Category;
 import com.example.canteen.exception.AppExeception;
-import com.example.canteen.exception.ErrorCode;
+import com.example.canteen.enums.ErrorCode;
 import com.example.canteen.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -1,7 +1,7 @@
 package com.example.canteen.config;
 
 import com.example.canteen.dto.respone.ApiResponse;
-import com.example.canteen.exception.ErrorCode;
+import com.example.canteen.enums.ErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

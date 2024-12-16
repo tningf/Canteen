@@ -1,4 +1,4 @@
-package com.example.canteen.dto.respone;
+package com.example.canteen.dto;
 
 import lombok.*;
 
@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserResponse {
+public class UserDto {
     private Long userId;
     private String username;
     private String fullName;

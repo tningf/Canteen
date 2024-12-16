@@ -10,7 +10,7 @@ import com.example.canteen.entity.Image;
 import com.example.canteen.entity.Product;
 import com.example.canteen.entity.Stock;
 import com.example.canteen.exception.AppExeception;
-import com.example.canteen.exception.ErrorCode;
+import com.example.canteen.enums.ErrorCode;
 import com.example.canteen.mapper.ImageMapper;
 import com.example.canteen.mapper.ProductMapper;
 import com.example.canteen.mapper.StockMapper;
@@ -21,7 +21,6 @@ import com.example.canteen.repository.StockRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.sql.Blob;
 import java.util.List;
 import java.util.Optional;
 @Service

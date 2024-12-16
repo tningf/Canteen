@@ -29,7 +29,7 @@ public class StockController {
 
     @GetMapping("/all")
     public ResponseEntity<ApiResponse> getAllStocks() {
-        List<StockDto> stocks = stockService.getAllStocks().stream()
+        List<StockDto> stocks = stockService.getAllStock().stream()
                 .map(stockMapper::toStockDto)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(new ApiResponse(1000, "Success", stocks));

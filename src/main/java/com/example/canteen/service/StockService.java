@@ -4,7 +4,7 @@ import com.example.canteen.dto.StockDto;
 import com.example.canteen.entity.Product;
 import com.example.canteen.entity.Stock;
 import com.example.canteen.exception.AppExeception;
-import com.example.canteen.exception.ErrorCode;
+import com.example.canteen.enums.ErrorCode;
 import com.example.canteen.repository.StockRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,14 +27,14 @@ public class StockService {
     // Add quantity to stock
     public StockDto addStock(Long productId, int quantity) {
         Product product = productService.getProductById(productId);
-            if (stockRepository.existsByProduct(product)) {
-                throw new AppExeception(ErrorCode.PRODUCT_ALREADY_EXISTS);
-            }
-            Stock stock = new Stock();
-            stock.setProduct(product);
-            stock.setQuantity(quantity);
-            stockRepository.save(stock);
-        return new StockDto(stock.getQuantity());
+        if (stockRepository.existsByProduct(product)) {
+            throw new AppExeception(ErrorCode.PRODUCT_ALREADY_EXISTS);
+        }
+        Stock stock = new Stock();
+        stock.setProduct(product);
+        stock.setQuantity(quantity);
+        stockRepository.save(stock);
+        return new StockDto(stock.getStockId(), stock.getQuantity());
     }
 
     // Update stock quantity by product id
@@ -42,11 +42,12 @@ public class StockService {
         Stock stock = stockRepository.findByProductId(productId);
         stock.setQuantity(quantity);
         stockRepository.save(stock);
-        return new StockDto(stock.getQuantity());
+        return new StockDto(stock.getStockId(), stock.getQuantity());
+
     }
 
-    //Get all stocks
-    public List<Stock> getAllStocks() {
+    // Get all stock
+    public List<Stock> getAllStock() {
         return stockRepository.findAll();
     }
 }

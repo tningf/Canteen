@@ -2,7 +2,7 @@ package com.example.canteen.controller;
 
 
 import com.example.canteen.dto.respone.ApiResponse;
-import com.example.canteen.exception.ErrorCode;
+import com.example.canteen.enums.ErrorCode;
 import com.example.canteen.service.CartItemService;
 import com.example.canteen.service.CartService;
 import lombok.RequiredArgsConstructor;

@@ -7,6 +7,4 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface StockMapper {
     StockDto toStockDto(Stock stock);
-
-    Stock toStock(StockDto stock);
 }

@@ -1,4 +1,4 @@
-package com.example.canteen.exception;
+package com.example.canteen.enums;
 
 import lombok.*;
 import org.springframework.http.HttpStatus;
@@ -9,9 +9,9 @@ import org.springframework.http.HttpStatusCode;
 @AllArgsConstructor
 @NoArgsConstructor
 public enum ErrorCode {
-    UNKNOWN(9999, "Lỗi không xác định!", HttpStatus.INTERNAL_SERVER_ERROR),
+    UNKNOWN(9999, "Oops!", HttpStatus.INTERNAL_SERVER_ERROR),
 
-    USER_EXITED(1001,"User đã tồn tại!", HttpStatus.CONFLICT),
+    USER_ALREADY_EXISTS(1001,"User đã tồn tại!", HttpStatus.CONFLICT),
     USER_NOT_FOUND(1002,"User không tồn tại!", HttpStatus.NOT_FOUND),
     UNAUTHENTICATED(1003, "Bạn chưa xác thực!", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(1004, "Bạn không có quyền truy cập!", HttpStatus.FORBIDDEN),
@@ -27,7 +27,9 @@ public enum ErrorCode {
     CART_NOT_FOUND(5001,"Không tìm thấy giỏ hàng", HttpStatus.NOT_FOUND),
     CART_ALREADY_EXISTS(5002,"Giỏ hàng đã tồn tại", HttpStatus.CONFLICT),
     CART_ITEM_NOT_FOUND(5003,"Không tìm thấy sản phẩm trong giỏ hàng", HttpStatus.NOT_FOUND),
-    CART_ITEM_ALREADY_EXISTS(5004,"Sản phẩm đã tồn tại trong giỏ hàng", HttpStatus.CONFLICT),;
+    CART_ITEM_ALREADY_EXISTS(5004,"Sản phẩm đã tồn tại trong giỏ hàng", HttpStatus.CONFLICT),
+
+    ORDER_NOT_FOUND(6001,"Không tìm thấy Order",HttpStatus.NOT_FOUND ),;
 
 
 

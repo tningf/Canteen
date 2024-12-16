@@ -3,7 +3,7 @@ package com.example.canteen.controller;
 
 import com.example.canteen.dto.respone.ApiResponse;
 import com.example.canteen.entity.Category;
-import com.example.canteen.exception.ErrorCode;
+import com.example.canteen.enums.ErrorCode;
 import com.example.canteen.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
