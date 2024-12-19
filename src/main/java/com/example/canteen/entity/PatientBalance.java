@@ -1,20 +1,25 @@
 package com.example.canteen.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@Table (name = "tb_PatinetBalance")
+@Table (name = "tb_Patient_Balance")
 public class PatientBalance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer balanceId;
-
-    @Column(name = "Patinet_ID")
-    private Integer patientId;
+    @Column(name = "PatientBalance_ID")
+    private Long id;
 
     @Column(name = "PatinetBalance")
     private BigDecimal balance;
@@ -25,45 +30,13 @@ public class PatientBalance {
     @Column(name = "UPDATE_DATE")
     private LocalDateTime updateDate;
 
-    // Getters and Setters
+    @Column(name = "CREATE_BY")
+    private String createBy;
 
-    public Integer getBalanceId() {
-        return balanceId;
-    }
+    @Column(name = "UPDATE_BY")
+    private String updateBy;
 
-    public void setBalanceId(Integer balanceId) {
-        this.balanceId = balanceId;
-    }
-
-    public Integer getPatientId() {
-        return patientId;
-    }
-
-    public void setPatientId(Integer patientId) {
-        this.patientId = patientId;
-    }
-
-    public BigDecimal getBalance() {
-        return balance;
-    }
-
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
-    }
-
-    public LocalDateTime getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(LocalDateTime createDate) {
-        this.createDate = createDate;
-    }
-
-    public LocalDateTime getUpdateDate() {
-        return updateDate;
-    }
-
-    public void setUpdateDate(LocalDateTime updateDate) {
-        this.updateDate = updateDate;
-    }
+    @OneToOne
+    @JoinColumn(name = "Patient_ID")
+    private Patient patient;
 }

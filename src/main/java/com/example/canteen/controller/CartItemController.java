@@ -1,10 +1,13 @@
 package com.example.canteen.controller;
 
 
-import com.example.canteen.dto.respone.ApiResponse;
+import com.example.canteen.dto.response.ApiResponse;
+import com.example.canteen.entity.Cart;
+import com.example.canteen.entity.Patient;
 import com.example.canteen.enums.ErrorCode;
 import com.example.canteen.service.CartItemService;
 import com.example.canteen.service.CartService;
+import com.example.canteen.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,17 +18,17 @@ import org.springframework.web.bind.annotation.*;
 public class CartItemController {
     private final CartItemService cartItemService;
     private final CartService cartService;
+    private final PatientService patientService;
 
     @PostMapping("/item/add")
-    public ResponseEntity<ApiResponse> addItemToCart(@RequestParam (required = false) Long cartId,
+    public ResponseEntity<ApiResponse> addItemToCart(
                                                      @RequestParam Long productId,
                                                      @RequestParam Integer quantity) {
         try {
-            if (cartId == null) {
-                cartId = cartService.initializeNewCart();
-            }
+            Patient patient = patientService.getAuthenticatedPatient();
+            Cart cart = cartService.initializeNewCart(patient);
 
-            cartItemService.addItemtoCart(cartId,productId,quantity);
+            cartItemService.addItemtoCart(cart.getId(),productId,quantity);
             return ResponseEntity.ok(ApiResponse
                     .builder()
                     .message("Thêm sản phẩm vào giỏ hàng thành công")

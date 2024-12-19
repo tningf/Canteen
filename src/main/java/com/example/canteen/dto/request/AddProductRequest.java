@@ -15,7 +15,7 @@ public class AddProductRequest {
     private String unit;
     private BigDecimal price;
     private boolean status;
-    private Category category;
+    private String category;
     private int quantity;
     private List<MultipartFile> images;
 }

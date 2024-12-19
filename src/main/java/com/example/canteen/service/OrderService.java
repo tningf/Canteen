@@ -4,10 +4,11 @@ import com.example.canteen.dto.OrderDto;
 import com.example.canteen.entity.*;
 import com.example.canteen.enums.ErrorCode;
 import com.example.canteen.enums.OrderStatus;
-import com.example.canteen.exception.AppExeception;
+import com.example.canteen.exception.AppException;
 import com.example.canteen.mapper.OrderMapper;
 import com.example.canteen.repository.OrderRepository;
 import com.example.canteen.repository.StockRepository;
+import com.example.canteen.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +16,14 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
     private final StockRepository stockRepository;
+    private final UserRepository userRepository;
     private final CartService cartService;
     private final OrderMapper orderMapper;
 
@@ -70,7 +73,7 @@ public class OrderService {
     public OrderDto getOrder(Long orderId) {
         return orderRepository.findById(orderId)
                 .map(orderMapper::convertToDto)
-                .orElseThrow(() -> new AppExeception(ErrorCode.ORDER_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
     }
 
     public List<OrderDto> getPatientOrders(Long patientId) {
@@ -80,4 +83,20 @@ public class OrderService {
                 .toList();
     }
 
+    public List<OrderDto> getAllOrders() {
+        List<Order> orders = orderRepository.findAll();
+        return orders.stream()
+                .map(orderMapper::convertToDto)
+                .toList();
+    }
+
+//    public void changeOrderStatus(Long orderId, OrderStatus newStatus, String username) {
+//        Order order = orderRepository.findById(orderId)
+//                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+//        User employee = Optional.ofNullable(userRepository.findByUsername(username))
+//                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+//        order.setOrderStatus(newStatus);
+//        order.setStatusUpdatedBy(employee);
+//        orderRepository.save(order);
+//    }
 }

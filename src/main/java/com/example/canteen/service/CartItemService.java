@@ -4,7 +4,7 @@ package com.example.canteen.service;
 import com.example.canteen.entity.Cart;
 import com.example.canteen.entity.CartItem;
 import com.example.canteen.entity.Product;
-import com.example.canteen.exception.AppExeception;
+import com.example.canteen.exception.AppException;
 import com.example.canteen.enums.ErrorCode;
 import com.example.canteen.repository.CartItemRepository;
 import com.example.canteen.repository.CartRepository;
@@ -84,6 +84,6 @@ public class CartItemService {
                 .stream()
                 .filter(item -> item.getProduct().getId().equals(productId))
                 .findFirst()
-                .orElseThrow(() -> new AppExeception(ErrorCode.PRODUCT_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
     }
 }

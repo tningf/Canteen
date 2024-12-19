@@ -3,8 +3,8 @@ package com.example.canteen.controller;
 
 import com.example.canteen.dto.request.CreateStockRequest;
 import com.example.canteen.dto.StockDto;
-import com.example.canteen.dto.request.UpdateStockRequest;
-import com.example.canteen.dto.respone.ApiResponse;
+import com.example.canteen.dto.request.StockUpdateRequest;
+import com.example.canteen.dto.response.ApiResponse;
 import com.example.canteen.mapper.StockMapper;
 import com.example.canteen.service.StockService;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +44,7 @@ public class StockController {
 
 
     @PutMapping("/{id}/update")
-    public ResponseEntity<ApiResponse> updateStock(@RequestBody UpdateStockRequest request, @PathVariable Long id) {
+    public ResponseEntity<ApiResponse> updateStock(@RequestBody StockUpdateRequest request, @PathVariable Long id) {
         StockDto stock = stockService.updateStock(id, request.getQuantity());
         return ResponseEntity.ok(new ApiResponse(1000, "Success", stock));
     }

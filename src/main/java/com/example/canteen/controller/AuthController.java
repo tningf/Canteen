@@ -1,15 +1,84 @@
 package com.example.canteen.controller;
 
+import com.example.canteen.dto.request.LoginRequest;
+import com.example.canteen.dto.response.JwtResponse;
+import com.example.canteen.security.jwt.JwtUtils;
+import com.example.canteen.security.user.UserPrincipal;
+import com.example.canteen.service.PatientService;
+import com.example.canteen.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.web.bind.annotation.GetMapping;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Map;
+
+@Slf4j
+@RequiredArgsConstructor
 @RestController
 public class AuthController {
+    private final AuthenticationManager authenticationManager;
+    private final PatientService patientService;
+    private final UserService userService;
+    private final JwtUtils jwtUtils;
 
-    @GetMapping("/")
-    public String greet(HttpServletRequest request) {
-        return "Welcome to  "+request.getSession().getId();
+    @PostMapping("/login/user")
+    public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody LoginRequest request,HttpServletRequest httpRequest){
+        try {
+            Authentication authentication =
+                    authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(
+                            request.getUsername(), request.getPassword()));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = jwtUtils.generateTokenForUser(authentication);
+            JwtResponse jwtResponse = new JwtResponse(jwt);
+            Map<String, Object> response = new HashMap<>();
+
+            UserPrincipal userDetails = (UserPrincipal) authentication.getPrincipal();
+            log.info("User {} logged in", userDetails.getUsername());
+            authentication.getAuthorities().forEach(authority -> log.info(authority.getAuthority()));
+
+            response.put("accessToken", jwtResponse.getAccessToken());
+            //Update Last Login Time and IP
+            updateLastLogin(httpRequest, userDetails.getId());
+
+            return ResponseEntity.ok(response);
+        } catch (AuthenticationException e) {
+            return ResponseEntity.status(401).body(Map.of("message", "Invalid username or password"+e.getMessage()));
+        }
+    }
+
+    @PostMapping("/login/patient")
+    public ResponseEntity<Map<String, String>> login(@RequestParam String cardNumber) {
+        String token = patientService.loginByCardNumber(cardNumber);
+        Map<String, String> response = new HashMap<>();
+        response.put("accessToken", token);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    public void updateLastLogin(HttpServletRequest request, Long userId) {
+        String clientIp = getClientIp(request);
+        userService.updateLastLogin(userId, clientIp);
+    }
+
+    private String getClientIp(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For"); // Lấy địa chỉ IP từ header
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr(); // Lấy địa chỉ IP từ remote address
+        }
+        return ip;
     }
 
 }

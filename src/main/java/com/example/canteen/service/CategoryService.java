@@ -1,7 +1,7 @@
 package com.example.canteen.service;
 
 import com.example.canteen.entity.Category;
-import com.example.canteen.exception.AppExeception;
+import com.example.canteen.exception.AppException;
 import com.example.canteen.enums.ErrorCode;
 import com.example.canteen.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +17,13 @@ public class CategoryService {
 
     public Category getCategoryById(Long id) {
         return categoryRepository.findById(id)
-                .orElseThrow(() -> new AppExeception(ErrorCode.CATEGORY_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
     }
 
     public Category getCategoryByName(String name) {
 
         return Optional.ofNullable(categoryRepository.findByName(name))
-                .orElseThrow(() -> new AppExeception(ErrorCode.CATEGORY_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
     }
 
     public List<Category> getAllCategories() {
@@ -41,7 +41,7 @@ public class CategoryService {
                     return cat;
                 })
                 .map(categoryRepository::save)
-                .orElseThrow(() -> new AppExeception(ErrorCode.CATEGORY_ALREADY_EXISTS));
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_ALREADY_EXISTS));
     }
 
     public Category updateCategory(Category category, Long id) {
@@ -50,7 +50,7 @@ public class CategoryService {
                     oldCategory.setName(category.getName());
                     return categoryRepository.save(oldCategory);
                 })
-                .orElseThrow(() -> new AppExeception(ErrorCode.CATEGORY_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
     }
 
     public void deleteCategory(Long id) {
@@ -59,7 +59,7 @@ public class CategoryService {
                     category.setStatus(false);
                     categoryRepository.save(category);
                 }, () -> {
-                    throw new AppExeception(ErrorCode.CATEGORY_NOT_FOUND);
+                    throw new AppException(ErrorCode.CATEGORY_NOT_FOUND);
                 });
     }
 }

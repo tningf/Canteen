@@ -1,14 +1,16 @@
 package com.example.canteen.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class StockDto {
-    private Long stockId;
-    private int quantity;
+public class PatientBalanceDto {
+    private Long id;
+    private BigDecimal balance;
+
 }

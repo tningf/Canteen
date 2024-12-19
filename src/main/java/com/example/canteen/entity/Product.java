@@ -36,14 +36,11 @@ public class Product{
     @JoinColumn(name = "Category_ID")
     private Category category;
 
-    @OneToOne
-    @JoinColumn(name = "Product_ID")
+    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private Stock stock;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images;
-
-
 
     public Product(String name, String unit, BigDecimal price, boolean status, Category category) {
         this.name = name;
@@ -52,5 +49,4 @@ public class Product{
         this.status = status;
         this.category = category;
     }
-
 }

@@ -1,55 +1,44 @@
 package com.example.canteen.controller;
 
-import com.example.canteen.dto.respone.ApiResponse;
+import com.example.canteen.dto.UserDto;
+import com.example.canteen.dto.request.CreateUserRequest;
+import com.example.canteen.dto.request.UserUpdateRequest;
+import com.example.canteen.dto.response.ApiResponse;
 import com.example.canteen.entity.User;
+import com.example.canteen.mapper.UserMapper;
 import com.example.canteen.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
+@RequiredArgsConstructor
 @RestController
+@RequestMapping("/users")
 public class UserController {
+    private final UserService userService;
+    private final UserMapper userMapper;
 
-    @Autowired
-    private UserService userService;
-
-    @PostMapping("/register")
-    public User register(@RequestBody User user) {
-        return userService.register(user);
-    }
-    @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody User user) {
-        try {
-            // Authenticate and generate the token
-            String token = userService.verify(user);
-
-            // Create the response map
-            Map<String, Object> response = new HashMap<>();
-            response.put("accessToken", token);
-
-            return ResponseEntity.ok(response);
-        } catch (ResponseStatusException ex) {
-            // Create error response
-            Map<String, Object> response = new HashMap<>();
-            response.put("message", ex.getReason());
-
-            return ResponseEntity.status(ex.getStatusCode()).body(response);
-        }
+    @PostMapping("/create-user")
+    public ResponseEntity<ApiResponse> createUser(@RequestBody CreateUserRequest request) {
+        User user = userService.createUser(request);
+        UserDto userDto = userMapper.toUserResponse(user);
+        return ResponseEntity.ok(ApiResponse.builder()
+                .message("User created successfully!")
+                .data(userDto)
+                .build());
     }
 
-    @PostMapping("/create_user")
-    public User createUser(@RequestBody User user) {
-        return userService.createUser(user);
+    @PutMapping("/{id}/update-user")
+    public ResponseEntity<ApiResponse> updateUser(@PathVariable Long id, @RequestBody UserUpdateRequest request) {
+        User user = userService.updateUser(id, request);
+        UserDto userDto = userMapper.toUserResponse(user);
+        return ResponseEntity.ok(ApiResponse.builder()
+                .message("User updated successfully!")
+                .data(userDto)
+                .build());
     }
 
-    @GetMapping("/myinfo")
+    @GetMapping("/my-info")
     public ApiResponse myInfo() {
         return ApiResponse.builder()
                 .code(1000)

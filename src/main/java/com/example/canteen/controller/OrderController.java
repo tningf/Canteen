@@ -1,8 +1,9 @@
 package com.example.canteen.controller;
 
 import com.example.canteen.dto.OrderDto;
-import com.example.canteen.dto.respone.ApiResponse;
+import com.example.canteen.dto.response.ApiResponse;
 import com.example.canteen.entity.Order;
+import com.example.canteen.mapper.OrderMapper;
 import com.example.canteen.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,18 +17,20 @@ import java.util.List;
 @RequestMapping("/orders")
 public class OrderController {
     private final OrderService orderService;
+    private final OrderMapper orderMapper;
 
     @PostMapping("/order")
     public ResponseEntity<ApiResponse> createOrder(@RequestParam Long patientId) {
         try {
             Order order = orderService.placeOrder(patientId);
+            OrderDto orderDto = orderMapper.convertToDto(order);
             return ResponseEntity.ok(ApiResponse.builder()
                     .message("Đặt hàng thành công!")
-                    .data(order)
+                    .data(orderDto)
                     .build());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.builder()
-                    .message("Đặt hàng thất bại!:" + e.getMessage())
+                    .message("Đặt hàng thất bại! " + e.getMessage())
                     .build());
         }
     }

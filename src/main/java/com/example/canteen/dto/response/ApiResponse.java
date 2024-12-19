@@ -1,4 +1,4 @@
-package com.example.canteen.dto.respone;
+package com.example.canteen.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;

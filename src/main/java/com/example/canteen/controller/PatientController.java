@@ -1,19 +1,19 @@
 package com.example.canteen.controller;
 
+import com.example.canteen.dto.PatientBalanceDto;
 import com.example.canteen.dto.PatientDto;
 import com.example.canteen.dto.request.CreatePatientRequest;
 import com.example.canteen.dto.request.PatientUpdateRequest;
-import com.example.canteen.dto.respone.ApiResponse;
+import com.example.canteen.dto.response.ApiResponse;
 import com.example.canteen.entity.Patient;
 import com.example.canteen.mapper.PatientMapper;
+import com.example.canteen.service.PatientBalanceService;
 import com.example.canteen.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -21,12 +21,15 @@ import java.util.Map;
 public class PatientController {
     private final PatientService patientService;
     private final PatientMapper patientMapper;
+    private final PatientBalanceService patientBalanceService;
 
     @PostMapping("/add")
     public ResponseEntity<ApiResponse> createPatient(@RequestBody CreatePatientRequest request) {
         try {
             Patient patient = patientService.createPatient(request);
             PatientDto patientDto = patientMapper.covertToDto(patient);
+            PatientBalanceDto patientBalanceDto = patientBalanceService.addBalance(patient.getId());
+            patientDto.setPatientBalance(patientBalanceDto);
             return ResponseEntity.ok(ApiResponse.builder()
                     .message("Tạo tài khoản thành công!")
                     .data(patientDto)
@@ -68,19 +71,12 @@ public class PatientController {
         }
     }
 
-    // POST
-    // Đăng nhập bằng CardNumber
-    @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestParam String cardNumber) {
-        String token = patientService.loginByCardNumber(cardNumber);
-        Map<String, String> response = new HashMap<>();
-        response.put("accessToken", token);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
     @GetMapping("/myinfo")
     public ApiResponse myInfo(){
+        Patient patient = patientService.getMyInfo();
+        PatientDto patientDto = patientMapper.covertToDto(patient);
         return ApiResponse.builder()
-                .data(patientService.getMyInfo())
+                .data(patientDto)
                 .build();
     }
 }

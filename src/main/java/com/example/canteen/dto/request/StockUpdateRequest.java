@@ -5,6 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UpdateStockRequest {
+public class StockUpdateRequest {
     private int quantity;
 }

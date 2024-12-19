@@ -4,7 +4,7 @@ package com.example.canteen.service;
 import com.example.canteen.dto.ImageDto;
 import com.example.canteen.entity.Image;
 import com.example.canteen.entity.Product;
-import com.example.canteen.exception.AppExeception;
+import com.example.canteen.exception.AppException;
 import com.example.canteen.enums.ErrorCode;
 import com.example.canteen.repository.ImageRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,13 +26,13 @@ public class ImageService {
 
     public Image getImageById(Long id) {
         return imageRepository.findById(id)
-                .orElseThrow(() -> new AppExeception(ErrorCode.IMAGE_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.IMAGE_NOT_FOUND));
     }
 
     public void deleteImageById(Long id) {
         imageRepository.findById(id)
                 .ifPresentOrElse(imageRepository::delete, () -> {
-                    throw new AppExeception(ErrorCode.IMAGE_NOT_FOUND);
+                    throw new AppException(ErrorCode.IMAGE_NOT_FOUND);
                 });
     }
 
@@ -85,6 +85,6 @@ public class ImageService {
     public Image getImageByProductId(Long productId) {
         return imageRepository.findByProductId(productId).stream()
                 .findFirst()
-                .orElseThrow(() -> new AppExeception(ErrorCode.IMAGE_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.IMAGE_NOT_FOUND));
     }
 }

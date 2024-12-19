@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.HashSet;
 
 @Getter
 @Setter
@@ -22,13 +24,13 @@ public class User {
     @Column(name = "User_ID")
     private Long userId;
 
-    @Column(name = "Username")
+    @Column(name = "Username", unique = true)
     private String username;
 
     @Column(name = "Password")
     private String password;
 
-    @Column(name = "FullName")
+    @Column(name = "FullName",columnDefinition = "nvarchar(255)")
     private String fullName;
 
     @Column(name = "STATUS")
@@ -45,5 +47,12 @@ public class User {
 
     @Column(name = "LAST_LOGIN_IP")
     private String lastLoginIp;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {
+            CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(name = "tb_User_Role",
+            joinColumns = @JoinColumn(name = "User_ID", referencedColumnName = "User_ID"),
+            inverseJoinColumns = @JoinColumn(name = "Role_ID", referencedColumnName = "Role_ID"))
+    private Collection<Role> roles = new HashSet<>();
 
 }

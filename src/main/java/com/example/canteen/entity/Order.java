@@ -38,4 +38,8 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "Patient_ID")
     private Patient patient;
+
+//    @ManyToOne
+//    @JoinColumn(name = "Status_Updated_By")
+//    private User statusUpdatedBy;
 }

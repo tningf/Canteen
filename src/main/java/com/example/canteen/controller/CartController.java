@@ -1,7 +1,7 @@
 package com.example.canteen.controller;
 
 import com.example.canteen.dto.CartDto;
-import com.example.canteen.dto.respone.ApiResponse;
+import com.example.canteen.dto.response.ApiResponse;
 import com.example.canteen.entity.Cart;
 import com.example.canteen.mapper.CartMapper;
 import com.example.canteen.service.CartService;

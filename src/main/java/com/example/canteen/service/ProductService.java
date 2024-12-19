@@ -4,12 +4,12 @@ import com.example.canteen.dto.ImageDto;
 import com.example.canteen.dto.ProductDto;
 import com.example.canteen.dto.StockDto;
 import com.example.canteen.dto.request.AddProductRequest;
-import com.example.canteen.dto.request.UpdateProductRequest;
+import com.example.canteen.dto.request.ProductUpdateRequest;
 import com.example.canteen.entity.Category;
 import com.example.canteen.entity.Image;
 import com.example.canteen.entity.Product;
 import com.example.canteen.entity.Stock;
-import com.example.canteen.exception.AppExeception;
+import com.example.canteen.exception.AppException;
 import com.example.canteen.enums.ErrorCode;
 import com.example.canteen.mapper.ImageMapper;
 import com.example.canteen.mapper.ProductMapper;
@@ -42,14 +42,22 @@ public class ProductService {
         // If No, save it as a new category
         // The set as the new product category
 
-        Category category = Optional.ofNullable(categoryRepository.findByName(request.getCategory().getName()))
+        if (checkProductExist(request.getName())){
+            throw new AppException(ErrorCode.PRODUCT_ALREADY_EXISTS);
+        }
+
+        Category category = Optional.ofNullable(categoryRepository.findByName(request.getCategory()))
                 .orElseGet(() -> {
-                    Category newCategory = new Category(request.getCategory().getName());
+                    Category newCategory = new Category(request.getCategory());
                     newCategory.setStatus(true);
                     return categoryRepository.save(newCategory);
                 });
-        request.setCategory(category);
+        request.setCategory(String.valueOf(category));
         return productRepository.save(createProduct(request, category));
+    }
+
+    public Boolean checkProductExist(String name) {
+        return productRepository.existsByName(name);
     }
 
     private Product createProduct(AddProductRequest request, Category category) {
@@ -65,24 +73,24 @@ public class ProductService {
     // Get a product by id
     public Product getProductById(Long productId) {
         return productRepository.findById(productId)
-                .orElseThrow(() -> new AppExeception(ErrorCode.PRODUCT_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
     }
 
     // Update product
-    public Product updateProduct(UpdateProductRequest request, Long productId) {
+    public Product updateProduct(ProductUpdateRequest request, Long productId) {
         return productRepository.findById(productId)
                 .map(existingProduct -> updateExistingProduct(existingProduct, request))
                 .map(productRepository::save)
-                .orElseThrow(() -> new AppExeception(ErrorCode.PRODUCT_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
     }
-    private Product updateExistingProduct(Product existingProduct, UpdateProductRequest request) {
+    private Product updateExistingProduct(Product existingProduct, ProductUpdateRequest request) {
         existingProduct.setName(request.getName());
         existingProduct.setUnit(request.getUnit());
         existingProduct.setPrice(request.getPrice());
         existingProduct.setStatus(true);
 
-        Category category = categoryRepository.findByName(request.getCategory().getName());
+        Category category = categoryRepository.findByName(request.getCategory());
         existingProduct.setCategory(category);
         return existingProduct;
     }
@@ -95,7 +103,7 @@ public class ProductService {
             existingProduct.setStatus(false);
             productRepository.save(existingProduct);
         } else {
-            throw new AppExeception(ErrorCode.PRODUCT_NOT_FOUND);
+            throw new AppException(ErrorCode.PRODUCT_NOT_FOUND);
         }
     }
 
@@ -112,7 +120,7 @@ public class ProductService {
     public List<Product> getProductByCategory(String category) {
         List<Product> products = productRepository.findByCategoryName(category);
         if (products.isEmpty()) {
-            throw new AppExeception(ErrorCode.PRODUCT_NOT_FOUND);
+            throw new AppException(ErrorCode.PRODUCT_NOT_FOUND);
         }
     return products;
     }

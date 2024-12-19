@@ -4,17 +4,20 @@ import com.example.canteen.dto.ImageDto;
 import com.example.canteen.dto.ProductDto;
 import com.example.canteen.dto.StockDto;
 import com.example.canteen.dto.request.AddProductRequest;
-import com.example.canteen.dto.request.UpdateProductRequest;
-import com.example.canteen.dto.respone.ApiResponse;
+import com.example.canteen.dto.request.ProductUpdateRequest;
+import com.example.canteen.dto.response.ApiResponse;
+import com.example.canteen.dto.response.PageResponse;
+
 import com.example.canteen.entity.Image;
 import com.example.canteen.entity.Product;
-import com.example.canteen.exception.AppExeception;
+import com.example.canteen.exception.AppException;
 import com.example.canteen.enums.ErrorCode;
 import com.example.canteen.service.ImageService;
 import com.example.canteen.service.ProductService;
 import com.example.canteen.service.StockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,6 +42,7 @@ public class ProductController {
                 .data(convertedProducts)
                 .build());
     }
+
     // Xem sản phẩm theo ID
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse> getProductById(@PathVariable Long id) {
@@ -56,6 +60,7 @@ public class ProductController {
 
     // POST
     // Tạo mới sản phẩm
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<ApiResponse> createProduct(@ModelAttribute AddProductRequest product) {
         // Thêm sản phẩm
@@ -65,7 +70,10 @@ public class ProductController {
         ProductDto productDto = productService.covertToDto(savedProduct);
 
         // Thêm kho
+
         StockDto stock = stockService.addStock(savedProduct.getId(), product.getQuantity());
+
+
         productDto.setStock(stock);
 
         List<MultipartFile> images = product.getImages();
@@ -75,7 +83,7 @@ public class ProductController {
                 List<ImageDto> imageDtos = imageService.saveImages(images, savedProduct.getId());
                 productDto.setImages(imageDtos);
             } catch (RuntimeException e) {
-                throw new AppExeception(ErrorCode.FAIL_TO_UPLOAD_IMAGE);
+                throw new AppException(ErrorCode.FAIL_TO_UPLOAD_IMAGE);
             }
         }
         return ResponseEntity.ok(new ApiResponse(1000, "Thêm thành công!", productDto));
@@ -84,7 +92,7 @@ public class ProductController {
     // PUT
     // Cập nhật sản phẩm theo ID
     @PutMapping("/{productId}")
-    public ResponseEntity<ApiResponse> updateProduct(@ModelAttribute UpdateProductRequest request, @PathVariable Long productId) {
+    public ResponseEntity<ApiResponse> updateProduct(@ModelAttribute ProductUpdateRequest request, @PathVariable Long productId) {
         Product theProduct = productService.updateProduct(request, productId);
         ProductDto productDto = productService.covertToDto(theProduct);
 
@@ -100,7 +108,7 @@ public class ProductController {
                     imageService.saveImages(List.of(imageFile), productId);
                 }
             } catch (RuntimeException e) {
-                throw new AppExeception(ErrorCode.FAIL_TO_UPLOAD_IMAGE);
+                throw new AppException(ErrorCode.FAIL_TO_UPLOAD_IMAGE);
             }
         }
         return ResponseEntity.ok(new ApiResponse(1000, "Cập nhật thành công", productDto));

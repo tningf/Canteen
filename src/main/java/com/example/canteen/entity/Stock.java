@@ -21,7 +21,8 @@ public class Stock {
     @Column(name = "Quantity")
     private int quantity;
 
-    @OneToOne(mappedBy = "stock")
+    @OneToOne
+    @JoinColumn(name = "Product_ID")
     private Product product;
 
 }

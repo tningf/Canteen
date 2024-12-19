@@ -1,82 +1,81 @@
 package com.example.canteen.service;
 
 import com.example.canteen.dto.UserDto;
+import com.example.canteen.dto.request.CreateUserRequest;
+import com.example.canteen.dto.request.UserUpdateRequest;
+import com.example.canteen.entity.Role;
 import com.example.canteen.entity.User;
-import com.example.canteen.exception.AppExeception;
+import com.example.canteen.exception.AppException;
 import com.example.canteen.enums.ErrorCode;
 import com.example.canteen.mapper.UserMapper;
 import com.example.canteen.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Optional;
 
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private JWTService jwtService;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private UserMapper userMapper;
-
-    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
-
-
-    public User register(User user){
-        user.setPassword(encoder.encode(user.getPassword()));
-        return userRepository.save(user);
+    public User createUser(CreateUserRequest request){
+        return Optional.of(request).filter(user -> !userRepository
+                        .existsByUsername(user.getUsername()))
+                .map(req -> {
+                    User user = new User();
+                    user.setUsername(request.getUsername());
+                    user.setPassword(passwordEncoder.encode(request.getPassword()));
+                    user.setFullName(request.getFullName());
+                    user.setStatus("true");
+                    user.setCreateDate(LocalDateTime.now());
+                    return userRepository.save(user);
+                }).orElseThrow(() -> new AppException(ErrorCode.USER_ALREADY_EXISTS));
     }
 
-    public User createUser(User user){
-        if(userRepository.existsByUsername(user.getUsername()))
-            throw new AppExeception(ErrorCode.USER_ALREADY_EXISTS);
-        user.setUsername(user.getUsername());
-        user.setPassword(encoder.encode(user.getPassword()));
-        user.setFullName(user.getFullName());
-        user.setStatus("true");
-        user.setCreateDate(LocalDateTime.now());
-        return userRepository.save(user);
+
+    public User updateUser(Long id, UserUpdateRequest request) {
+        return userRepository.findById(id)
+                .map(user -> {
+                    user.setFullName(request.getFullName());
+                    user.setStatus(request.getStatus().toString());
+
+                    // Kiểm tra và cập nhật Role
+                    Role newRole = new Role(request.getRole());
+                    if (user.getRoles().stream().noneMatch(role -> role.getName().equalsIgnoreCase(newRole.getName()))) {
+                        user.getRoles().add(newRole);
+                    }
+
+                    return userRepository.save(user);
+                }).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
     }
 
-    public String verify(User user) {
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
-            );
 
-            if (authentication.isAuthenticated()) {
-                return jwtService.generateToken(user.getUsername());
-            }
-        } catch (BadCredentialsException ex) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password");
-        }
-        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication failed");
-    }
-
+    @PostAuthorize("returnObject.username == authentication.name")
     public UserDto getMyInfo(){
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
         User user = userRepository.findByUsername(name)
-                .orElseThrow(() -> new AppExeception(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         return userMapper.toUserResponse(user);
     }
 
+
+    public void updateLastLogin(Long id, String lastLoginIp) {
+        userRepository.findById(id)
+                .map(user -> {
+                    user.setLastLoginIp(lastLoginIp);
+                    user.setLastLoginTime(LocalDateTime.now());
+                    return userRepository.save(user);
+                }).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+    }
 }

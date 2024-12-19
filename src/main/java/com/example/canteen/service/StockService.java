@@ -3,7 +3,7 @@ package com.example.canteen.service;
 import com.example.canteen.dto.StockDto;
 import com.example.canteen.entity.Product;
 import com.example.canteen.entity.Stock;
-import com.example.canteen.exception.AppExeception;
+import com.example.canteen.exception.AppException;
 import com.example.canteen.enums.ErrorCode;
 import com.example.canteen.repository.StockRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,14 +21,14 @@ public class StockService {
     // Get stock by id
     public Stock getStockById(Long id) {
         return stockRepository.findById(id)
-                .orElseThrow(() -> new AppExeception(ErrorCode.UNKNOWN));
+                .orElseThrow(() -> new AppException(ErrorCode.UNKNOWN));
     }
 
     // Add quantity to stock
     public StockDto addStock(Long productId, int quantity) {
         Product product = productService.getProductById(productId);
         if (stockRepository.existsByProduct(product)) {
-            throw new AppExeception(ErrorCode.PRODUCT_ALREADY_EXISTS);
+            throw new AppException(ErrorCode.PRODUCT_ALREADY_EXISTS);
         }
         Stock stock = new Stock();
         stock.setProduct(product);
