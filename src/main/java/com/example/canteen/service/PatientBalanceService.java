@@ -23,6 +23,19 @@ public class PatientBalanceService {
     private final PatientBalanceRepository patientBalanceRepository;
     private final TransactionHistoryRepository transactionHistoryRepository;
 
+    //Get patient balance
+    public PatientBalanceDto getBalance() {
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        Long patientId = patientRepository.findByCardNumber(name)
+                .orElseThrow(() -> new AppException(ErrorCode.PATIENT_NOT_FOUND))
+                .getId();
+        Patient patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new AppException(ErrorCode.PATIENT_NOT_FOUND));
+        PatientBalance patientBalance = patient.getPatientBalance();
+        return new PatientBalanceDto(patientBalance.getId(), patientBalance.getBalance());
+    }
+
     //Add patient balance
     public PatientBalanceDto addBalance(Long patientId) {
         Patient patient = patientRepository.findById(patientId)

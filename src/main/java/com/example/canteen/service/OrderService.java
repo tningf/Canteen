@@ -23,7 +23,6 @@ import java.util.Optional;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final StockRepository stockRepository;
-    private final UserRepository userRepository;
     private final CartService cartService;
     private final OrderMapper orderMapper;
 

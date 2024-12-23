@@ -13,7 +13,6 @@ public class PatientDto {
     private String email;
     private String phoneNumber;
     private String address;
-    private PatientBalanceDto patientBalance;
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
     private List<OrderDto> orders;

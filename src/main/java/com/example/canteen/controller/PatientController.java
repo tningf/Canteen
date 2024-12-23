@@ -1,6 +1,5 @@
 package com.example.canteen.controller;
 
-import com.example.canteen.dto.PatientBalanceDto;
 import com.example.canteen.dto.PatientDto;
 import com.example.canteen.dto.request.CreatePatientRequest;
 import com.example.canteen.dto.request.PatientUpdateRequest;
@@ -28,8 +27,7 @@ public class PatientController {
         try {
             Patient patient = patientService.createPatient(request);
             PatientDto patientDto = patientMapper.covertToDto(patient);
-            PatientBalanceDto patientBalanceDto = patientBalanceService.addBalance(patient.getId());
-            patientDto.setPatientBalance(patientBalanceDto);
+            patientBalanceService.addBalance(patient.getId());
             return ResponseEntity.ok(ApiResponse.builder()
                     .message("Tạo tài khoản thành công!")
                     .data(patientDto)
@@ -71,7 +69,7 @@ public class PatientController {
         }
     }
 
-    @GetMapping("/myinfo")
+    @GetMapping("/my-info")
     public ApiResponse myInfo(){
         Patient patient = patientService.getMyInfo();
         PatientDto patientDto = patientMapper.covertToDto(patient);

@@ -9,6 +9,5 @@ import org.mapstruct.Mapping;
 public interface PatientMapper {
     @Mapping(source = "id", target = "patientId")
     @Mapping(source = "orders", target = "orders")
-    @Mapping(source = "patientBalance", target = "patientBalance")
     PatientDto covertToDto(Patient patient);
 }

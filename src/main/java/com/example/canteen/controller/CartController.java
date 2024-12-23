@@ -18,9 +18,9 @@ public class CartController {
     private final CartService cartService;
     private final CartMapper cartMapper;
 
-    @GetMapping("/{cartId}/my-cart")
-    public ResponseEntity<ApiResponse> getCart(@PathVariable Long cartId) {
-        Cart cart = cartService.getCart(cartId);
+    @GetMapping("/my-cart")
+    public ResponseEntity<ApiResponse> getCart() {
+        Cart cart = cartService.getCartByPatientCardNumber();
         CartDto cartDto = cartMapper.toCartDto(cart);
         return ResponseEntity.ok(ApiResponse.builder()
                 .message("Lấy dữ liệu thành công")

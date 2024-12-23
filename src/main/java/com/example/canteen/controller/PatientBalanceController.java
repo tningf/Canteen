@@ -14,6 +14,15 @@ import org.springframework.web.bind.annotation.*;
 public class PatientBalanceController {
     private final PatientBalanceService patientBalanceService;
 
+    @GetMapping("/my-balance")
+    public ResponseEntity<ApiResponse> getMyBalance() {
+        PatientBalanceDto patientBalance = patientBalanceService.getBalance();
+        return ResponseEntity.ok(ApiResponse.builder()
+                .message("Lấy dữ liệu thành công")
+                .data(patientBalance)
+                .build());
+    }
+
     @PutMapping("/{id}/top-up")
     public ResponseEntity<ApiResponse> topUpBalance(@RequestBody PatientTopUpBalanceRequest request,@PathVariable Long id) {
         PatientBalanceDto patientBalance = patientBalanceService.topUpBalance(id, request.getBalance());

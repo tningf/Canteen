@@ -8,6 +8,7 @@ import com.example.canteen.enums.ErrorCode;
 import com.example.canteen.repository.CartItemRepository;
 import com.example.canteen.repository.CartRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,6 +62,16 @@ public class CartService {
 
     public Cart getCartByPatientId(Long patientId) {
         Cart cart = cartRepository.findByPatientId(patientId);
+        if (cart == null) {
+            throw new AppException(ErrorCode.CART_NOT_FOUND);
+        }
+        return cart;
+    }
+
+    public Cart getCartByPatientCardNumber() {
+        var context = SecurityContextHolder.getContext();
+        var cardNumber = context.getAuthentication().getName();
+        Cart cart = cartRepository.findByPatientCardNumber(cardNumber);
         if (cart == null) {
             throw new AppException(ErrorCode.CART_NOT_FOUND);
         }
