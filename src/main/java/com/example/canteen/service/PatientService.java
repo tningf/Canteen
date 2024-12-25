@@ -66,7 +66,6 @@ public class PatientService {
                 .orElseThrow(() -> new UsernameNotFoundException("Patient not found with card number: " + cardNumber));
     }
 
-    @PostAuthorize("returnObject.cardNumber == authentication.name")
     public Patient getMyInfo() {
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
