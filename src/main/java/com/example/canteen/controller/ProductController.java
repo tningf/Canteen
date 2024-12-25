@@ -6,7 +6,6 @@ import com.example.canteen.dto.StockDto;
 import com.example.canteen.dto.request.AddProductRequest;
 import com.example.canteen.dto.request.ProductUpdateRequest;
 import com.example.canteen.dto.response.ApiResponse;
-import com.example.canteen.dto.response.PageResponse;
 
 import com.example.canteen.entity.Image;
 import com.example.canteen.entity.Product;
@@ -60,7 +59,7 @@ public class ProductController {
 
     // POST
     // Tạo mới sản phẩm
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('KETOAN', 'ADMIN')")
     @PostMapping
     public ResponseEntity<ApiResponse> createProduct(@ModelAttribute AddProductRequest product) {
         // Thêm sản phẩm
@@ -72,7 +71,6 @@ public class ProductController {
         // Thêm kho
 
         StockDto stock = stockService.addStock(savedProduct.getId(), product.getQuantity());
-
 
         productDto.setStock(stock);
 
@@ -91,6 +89,7 @@ public class ProductController {
 
     // PUT
     // Cập nhật sản phẩm theo ID
+    @PreAuthorize("hasAnyRole('KETOAN', 'ADMIN')")
     @PutMapping("/{productId}")
     public ResponseEntity<ApiResponse> updateProduct(@ModelAttribute ProductUpdateRequest request, @PathVariable Long productId) {
         Product theProduct = productService.updateProduct(request, productId);
@@ -115,6 +114,7 @@ public class ProductController {
     }
     // DELETE
     // Xóa mềm sản phẩm
+    @PreAuthorize("hasAnyRole('KETOAN', 'ADMIN')")
     @DeleteMapping("/{productId}")
     public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Long productId) {
         productService.deleteProduct(productId);

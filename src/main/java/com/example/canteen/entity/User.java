@@ -10,6 +10,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -22,7 +23,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "User_ID")
-    private Long userId;
+    private Long id;
 
     @Column(name = "Username", unique = true)
     private String username;
@@ -53,6 +54,6 @@ public class User {
     @JoinTable(name = "tb_User_Role",
             joinColumns = @JoinColumn(name = "User_ID", referencedColumnName = "User_ID"),
             inverseJoinColumns = @JoinColumn(name = "Role_ID", referencedColumnName = "Role_ID"))
-    private Collection<Role> roles = new HashSet<>();
+    private Set<Role> roles = new HashSet<>();
 
 }

@@ -26,10 +26,10 @@ public class UserPrincipal implements UserDetails {
     public static UserPrincipal buildUserDetail(User user) {
         List<GrantedAuthority> authorities = user.getRoles()
                 .stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
+                .map(role -> new SimpleGrantedAuthority(role.getName().name()))
                 .collect(Collectors.toList());
         return new UserPrincipal(
-                user.getUserId(),
+                user.getId(),
                 user.getUsername(),
                 user.getPassword(),
                 authorities);

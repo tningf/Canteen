@@ -8,6 +8,7 @@ import com.example.canteen.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +30,7 @@ public class CategoryController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('KETOAN', 'ADMIN')")
     @PostMapping("/add")
     public ResponseEntity<ApiResponse> addCategory(@RequestBody Category name) {
         Category newCategory = categoryService.addCategory(name);
@@ -46,13 +48,13 @@ public class CategoryController {
         Category category = categoryService.getCategoryByName(name);
         return ResponseEntity.ok(new ApiResponse(1000, "Tìm thấy!", category));
     }
-
+    @PreAuthorize("hasAnyRole('KETOAN', 'ADMIN')")
     @PutMapping("category/{id}/update")
     public ResponseEntity<ApiResponse> updateCategory( @PathVariable Long id, @RequestBody Category category) {
         Category updatedCategory = categoryService.updateCategory(category, id);
         return ResponseEntity.ok(new ApiResponse(1000, "Cập nhật danh mục sản phẩm thành công!", updatedCategory));
     }
-
+    @PreAuthorize("hasAnyRole('KETOAN', 'ADMIN')")
     @DeleteMapping("category/{id}/delete")
     public ResponseEntity<ApiResponse> deleteCategory(@PathVariable Long id) {
         categoryService.deleteCategory(id);

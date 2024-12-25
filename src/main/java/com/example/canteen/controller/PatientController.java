@@ -11,6 +11,7 @@ import com.example.canteen.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -22,6 +23,7 @@ public class PatientController {
     private final PatientMapper patientMapper;
     private final PatientBalanceService patientBalanceService;
 
+    @PreAuthorize("hasAnyRole('KETOAN', 'ADMIN')")
     @PostMapping("/add")
     public ResponseEntity<ApiResponse> createPatient(@RequestBody CreatePatientRequest request) {
         try {
@@ -39,6 +41,7 @@ public class PatientController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('KETOAN', 'ADMIN')")
     @PutMapping("/{patientId}/update")
     public ResponseEntity<ApiResponse> updatePatient(@RequestBody PatientUpdateRequest request, @PathVariable Long patientId) {
         try {
@@ -55,6 +58,7 @@ public class PatientController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('KETOAN', 'ADMIN')")
     @DeleteMapping("/{patientId}/delete")
     public ResponseEntity<ApiResponse> deletePatient(@PathVariable Long patientId) {
         try {

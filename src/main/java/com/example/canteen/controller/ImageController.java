@@ -13,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,7 +27,7 @@ import java.util.List;
 public class ImageController {
     private final ImageService imageService;
 
-
+    @PreAuthorize("hasAnyRole('KETOAN', 'ADMIN')")
     @PostMapping("/upload")
     public ResponseEntity<ApiResponse> saveImages(@RequestParam List<MultipartFile> files,@RequestParam Long productId) {
         try {
@@ -45,7 +46,7 @@ public class ImageController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + image.getFileName() + "\"")
                 .body(resource);
     }
-
+    @PreAuthorize("hasAnyRole('KETOAN', 'ADMIN')")
     @PutMapping("/image/{imageId}/update")
     public ResponseEntity<ApiResponse> updateImage(@PathVariable Long imageId,@RequestBody MultipartFile file){
         Image image = imageService.getImageById(imageId);
@@ -59,7 +60,7 @@ public class ImageController {
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(ErrorCode.FAIL_TO_UPLOAD_IMAGE.getCode(),ErrorCode.FAIL_TO_UPLOAD_IMAGE.getMessage(),null));
     }
-
+    @PreAuthorize("hasAnyRole('KETOAN', 'ADMIN')")
     @DeleteMapping("/image/{imageId}/delete")
     public ResponseEntity<ApiResponse> deleteImage(@PathVariable Long imageId){
         Image image = imageService.getImageById(imageId);

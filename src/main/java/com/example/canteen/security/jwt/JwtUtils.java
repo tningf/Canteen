@@ -6,6 +6,7 @@ import com.example.canteen.security.user.UserPrincipal;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+@Slf4j
 @Component
 public class JwtUtils {
     @Value("${auth.token.jwtSecret}")
@@ -94,11 +96,23 @@ public class JwtUtils {
 //    }
 
     public boolean validateToken(String token, Object user) {
-        final String username = extractUserName(token);
-        if (user instanceof UserDetails) {
-            return username.equals(((UserDetails) user).getUsername()) && !isTokenExpired(token);
-        } else if (user instanceof Patient) {
-            return username.equals(((Patient) user).getCardNumber()) && !isTokenExpired(token);
+        try {
+            final String username = extractUserName(token);
+            if (user instanceof UserDetails) {
+                return username.equals(((UserDetails) user).getUsername()) && !isTokenExpired(token);
+            } else if (user instanceof Patient) {
+                return username.equals(((Patient) user).getCardNumber()) && !isTokenExpired(token);
+            }
+        } catch (SecurityException ex) {
+            log.error("Invalid JWT signature");
+        } catch (MalformedJwtException ex) {
+            log.error("Invalid JWT token");
+        } catch (ExpiredJwtException ex) {
+            log.error("Expired JWT token");
+        } catch (UnsupportedJwtException ex) {
+            log.error("Unsupported JWT token");
+        } catch (IllegalArgumentException ex) {
+            log.error("JWT claims string is empty");
         }
         return false;
     }

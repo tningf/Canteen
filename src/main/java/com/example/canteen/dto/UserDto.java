@@ -1,8 +1,11 @@
 package com.example.canteen.dto;
 
+import com.example.canteen.entity.Role;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -17,5 +20,6 @@ public class UserDto {
     private LocalDateTime updateDate;
     private LocalDateTime lastLoginTime;
     private String lastLoginIp;
+    private Set<Role> roles;
 
 }

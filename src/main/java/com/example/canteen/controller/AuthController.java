@@ -56,7 +56,7 @@ public class AuthController {
 
             return ResponseEntity.ok(response);
         } catch (AuthenticationException e) {
-            return ResponseEntity.status(401).body(Map.of("message", "Invalid username or password"+e.getMessage()));
+            return ResponseEntity.status(401).body(Map.of("message", "Invalid username or password!"));
         }
     }
 
