@@ -11,12 +11,24 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
     private final UserMapper userMapper;
+
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponse> getAllUsers() {
+        List<User> user = userService.getAllUsers();
+        List<UserDto> userDto = userService.getConvertUsers(user);
+        return ResponseEntity.ok(ApiResponse.builder()
+                .message("Get all users successfully!")
+                .data(userDto)
+                .build());
+    }
 
     @PostMapping("/create-user")
     public ResponseEntity<ApiResponse> createUser(@RequestBody CreateUserRequest request) {
@@ -43,5 +55,13 @@ public class UserController {
                 .code(1000)
                 .data(userService.getMyInfo())
                 .build();
+    }
+
+    @DeleteMapping("/{id}/delete-user")
+    public ResponseEntity<ApiResponse> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.ok(ApiResponse.builder()
+                .message("User deleted successfully!")
+                .build());
     }
 }

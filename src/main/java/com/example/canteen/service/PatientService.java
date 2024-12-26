@@ -1,10 +1,12 @@
 package com.example.canteen.service;
 
+import com.example.canteen.dto.PatientDto;
 import com.example.canteen.dto.request.CreatePatientRequest;
 import com.example.canteen.dto.request.PatientUpdateRequest;
 import com.example.canteen.entity.Patient;
 import com.example.canteen.exception.AppException;
 import com.example.canteen.enums.ErrorCode;
+import com.example.canteen.mapper.PatientMapper;
 import com.example.canteen.repository.PatientRepository;
 import com.example.canteen.security.jwt.JwtUtils;
 import lombok.RequiredArgsConstructor;
@@ -15,13 +17,16 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class PatientService {
     private final PatientRepository patientRepository;
     private final JwtUtils jwtService;
+    private final PatientMapper patientMapper;
 
     public Patient getPatientById(Long patientId) {
         return patientRepository.findById(patientId)
@@ -86,5 +91,11 @@ public class PatientService {
         return jwtService.generateToken(patient.getCardNumber());
     }
 
+    public List<Patient> getAllPatients() {
+        return patientRepository.findAll();
+    }
 
+    public List<PatientDto> covertToDto(List<Patient> patients) {
+        return patients.stream().map(patientMapper::covertToDto).collect(Collectors.toList());
+    }
 }

@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RequiredArgsConstructor
 @RestController
@@ -22,6 +24,17 @@ public class PatientController {
     private final PatientService patientService;
     private final PatientMapper patientMapper;
     private final PatientBalanceService patientBalanceService;
+
+
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponse> getAllPatients() {
+        List<Patient> patients = patientService.getAllPatients();
+        List<PatientDto> patientDtos = patientService.covertToDto(patients);
+        return ResponseEntity.ok(ApiResponse.builder()
+                .message("Lấy danh sách tất cả bệnh nhân thành công!")
+                .data(patientDtos)
+                .build());
+    }
 
     @PreAuthorize("hasAnyRole('KETOAN', 'ADMIN')")
     @PostMapping("/add")

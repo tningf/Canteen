@@ -31,11 +31,11 @@ public class User {
     @Column(name = "Password")
     private String password;
 
-    @Column(name = "FullName",columnDefinition = "nvarchar(255)")
+    @Column(name = "FullName",columnDefinition = "NVARCHAR(255)")
     private String fullName;
 
     @Column(name = "STATUS")
-    private String status;
+    private Boolean status;
 
     @Column(name = "CREATE_DATE")
     private LocalDateTime createDate;

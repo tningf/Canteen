@@ -15,11 +15,9 @@ public class UserDto {
     private Long userId;
     private String username;
     private String fullName;
-    private String status;
+    private Boolean status;
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
     private LocalDateTime lastLoginTime;
     private String lastLoginIp;
-    private Set<Role> roles;
-
 }
