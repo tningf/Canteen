@@ -125,6 +125,9 @@ public class ProductController {
         Product theProduct = productService.updateProduct(request, productId);
         ProductDto productDto = productService.covertToDto(theProduct);
 
+        StockDto stock = stockService.updateStock(productId, request.getQuantity());
+        productDto.setStock(stock);
+
         MultipartFile imageFile = request.getImage();
         if (imageFile != null && !imageFile.isEmpty()) {
             try {

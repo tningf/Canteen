@@ -110,15 +110,6 @@ public class ProductService {
     }
 
 
-    // Get all products by category
-    public List<Product> getProductByCategory(String category) {
-        List<Product> products = productRepository.findByCategoryName(category);
-        if (products.isEmpty()) {
-            throw new AppException(ErrorCode.PRODUCT_NOT_FOUND);
-        }
-    return products;
-    }
-
     public List<ProductDto> getConvertProducts(List<Product> products) {
         return products.stream()
                 .map(this::covertToDto)

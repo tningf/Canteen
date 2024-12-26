@@ -6,6 +6,5 @@ public class PaginationConstants {
     public static final String DEFAULT_SORT_BY = "id";
     public static final String DEFAULT_SORT_DIRECTION = "asc";
 
-    // Prevent instantiation
     private PaginationConstants() {}
 }
