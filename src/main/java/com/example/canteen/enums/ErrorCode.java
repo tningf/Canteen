@@ -29,11 +29,21 @@ public enum ErrorCode {
     CART_ALREADY_EXISTS(5002,"Giỏ hàng đã tồn tại!", HttpStatus.CONFLICT),
     CART_ITEM_NOT_FOUND(5003,"Không tìm thấy sản phẩm trong giỏ hàng!", HttpStatus.NOT_FOUND),
     CART_ITEM_ALREADY_EXISTS(5004,"Sản phẩm đã tồn tại trong giỏ hàng!", HttpStatus.CONFLICT),
+    INVALID_QUANTITY(5005,"Số lượng sản phẩm phải lớn hơn 0" ,HttpStatus.BAD_REQUEST),
+    CART_UPDATE_FAILED(5006,"Cập nhật giỏ hàng thất bại!" ,HttpStatus.INTERNAL_SERVER_ERROR),
 
     ORDER_NOT_FOUND(6001,"Không tìm thấy Order", HttpStatus.NOT_FOUND ),
-
+    INVALID_STATUS_TRANSITION_CANCELED(6002,"Không thể cập nhật đơn hàng đã bị hủy!" , HttpStatus.BAD_REQUEST),
+    INVALID_STATUS_TRANSITION_CONFIRMED_TO_PENDING(6002,"Không thể cập nhật đơn hàng từ Đã xác nhận sang Đang chờ xác nhận!", HttpStatus.BAD_REQUEST),
+    INVALID_STATUS_TRANSITION_EXPIRED(6002,"Không thể hủy đơn hàng Đã xác nhận quá 15 phút!" , HttpStatus.BAD_REQUEST),
+    INVALID_STATUS_TRANSITION_CANCELED_TO_CANCELED(6003,"Đơn hàng đã ở trạng thái Đã hủy bỏ!" , HttpStatus.BAD_REQUEST),
+    
     PATIENT_NOT_FOUND(7001,"Không tìm thấy bệnh nhân!", HttpStatus.NOT_FOUND),
-    INSUFFICIENT_BALANCE(8001, "Không đủ số dư!", HttpStatus.BAD_REQUEST);
+    INSUFFICIENT_BALANCE(8001, "Không đủ số dư!", HttpStatus.BAD_REQUEST),
+    INSUFFICIENT_STOCK(8002,"Sản phẩm đã hết hàng hoặc số lượng mua lớn hơn sản phẩm còn lại!" , HttpStatus.BAD_REQUEST),
+    ;
+
+
 
     private int code;
     private String message;

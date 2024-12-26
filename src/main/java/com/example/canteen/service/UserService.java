@@ -9,6 +9,7 @@ import com.example.canteen.enums.ErrorCode;
 import com.example.canteen.mapper.UserMapper;
 import com.example.canteen.repository.RoleRepository;
 import com.example.canteen.repository.UserRepository;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PostAuthorize;
@@ -87,5 +88,9 @@ public class UserService {
                     user.setStatus(false);
                     return userRepository.save(user);
                 }).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    public boolean isUserActive(@NotBlank String username) {
+        return userRepository.existsByUsernameAndStatusTrue(username);
     }
 }

@@ -37,6 +37,10 @@ public class AuthController {
     @PostMapping("/login/user")
     public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody LoginRequest request,HttpServletRequest httpRequest){
         try {
+            if (!userService.isUserActive(request.getUsername())) {
+                return ResponseEntity.status(401)
+                        .body(Map.of("message", "Account is inactive. Please contact administrator!"));
+            }
             Authentication authentication =
                     authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(

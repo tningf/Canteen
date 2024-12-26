@@ -49,17 +49,15 @@ public class PatientService {
     }
 
     public Patient updatePatient(PatientUpdateRequest request, Long patientId) {
-       return patientRepository.findById(patientId)
-               .map(existingPatient -> {
-                   existingPatient.setFullName(request.getFullName());
-                   existingPatient.setEmail(request.getEmail());
-                   existingPatient.setPhoneNumber(request.getPhoneNumber());
-                   existingPatient.setAddress(request.getAddress());
-                   existingPatient.setUpdateDate(LocalDateTime.now());
-                   return patientRepository.save(existingPatient);
-               }).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-
-    }
+    return patientRepository.findById(patientId).map(existingPatient -> {
+        Optional.ofNullable(request.getFullName()).ifPresent(existingPatient::setFullName);
+        Optional.ofNullable(request.getEmail()).ifPresent(existingPatient::setEmail);
+        Optional.ofNullable(request.getPhoneNumber()).ifPresent(existingPatient::setPhoneNumber);
+        Optional.ofNullable(request.getAddress()).ifPresent(existingPatient::setAddress);
+        existingPatient.setUpdateDate(LocalDateTime.now());
+        return patientRepository.save(existingPatient);
+    }).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+}
 
     public void deletePatient(Long patientId) {
         patientRepository.findById(patientId)

@@ -1,5 +1,6 @@
 package com.example.canteen.controller;
 
+import com.example.canteen.constant.PaginationConstants;
 import com.example.canteen.dto.ImageDto;
 import com.example.canteen.dto.ProductDto;
 import com.example.canteen.dto.StockDto;
@@ -7,6 +8,7 @@ import com.example.canteen.dto.request.AddProductRequest;
 import com.example.canteen.dto.request.ProductUpdateRequest;
 import com.example.canteen.dto.response.ApiResponse;
 
+import com.example.canteen.dto.response.PageResponse;
 import com.example.canteen.entity.Image;
 import com.example.canteen.entity.Product;
 import com.example.canteen.exception.AppException;
@@ -15,6 +17,10 @@ import com.example.canteen.service.ImageService;
 import com.example.canteen.service.ProductService;
 import com.example.canteen.service.StockService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -33,12 +39,24 @@ public class ProductController {
     // GET
     // Xem tất cả sản phẩm
     @GetMapping
-    public ResponseEntity<ApiResponse> getAllProducts() {
-        List<Product> products = productService.getAllActiveProducts();
-        List<ProductDto> convertedProducts = productService.getConvertProducts(products);
+    public ResponseEntity<ApiResponse> getAllProducts(
+            @RequestParam(defaultValue = PaginationConstants.DEFAULT_PAGE_NUMBER) int page,
+            @RequestParam(defaultValue = PaginationConstants.DEFAULT_PAGE_SIZE) int size,
+            @RequestParam(defaultValue = PaginationConstants.DEFAULT_SORT_BY) String sortBy,
+            @RequestParam(defaultValue = PaginationConstants.DEFAULT_SORT_DIRECTION) String sortDirection) {
+
+        Sort.Direction direction = sortDirection.equalsIgnoreCase("desc") ?
+                Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+
+        Page<Product> productPage = productService.getAllActiveProductsPaginated(pageable);
+        List<ProductDto> convertedProducts = productService.getConvertProducts(productPage.getContent());
+
+        PageResponse<ProductDto> pageResponse = PageResponse.of(convertedProducts, productPage);
+
         return ResponseEntity.ok(ApiResponse.builder()
                 .message("Lấy dữ liệu thành công")
-                .data(convertedProducts)
+                .data(pageResponse)
                 .build());
     }
 
@@ -51,12 +69,24 @@ public class ProductController {
     }
     // Xem sản phẩm theo category
     @GetMapping("/category/{category}/all")
-    public ResponseEntity<ApiResponse> getProductByCategory(@PathVariable String category) {
-        List<Product> products = productService.getProductByCategory(category);
-        List<ProductDto> convertedProducts = productService.getConvertProducts(products);
-        return ResponseEntity.ok(new ApiResponse(1000, "Success", convertedProducts));
-    }
+    public ResponseEntity<ApiResponse> getProductByCategory(
+            @PathVariable String category,
+            @RequestParam(defaultValue = PaginationConstants.DEFAULT_PAGE_NUMBER) int page,
+            @RequestParam(defaultValue = PaginationConstants.DEFAULT_PAGE_SIZE) int size,
+            @RequestParam(defaultValue = PaginationConstants.DEFAULT_SORT_BY) String sortBy,
+            @RequestParam(defaultValue = PaginationConstants.DEFAULT_SORT_DIRECTION) String sortDirection) {
 
+        Sort.Direction direction = sortDirection.equalsIgnoreCase("desc") ?
+                Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+
+        Page<Product> products = productService.getProductByCategoryPaginated(category, pageable);
+        List<ProductDto> convertedProducts = productService.getConvertProducts(products.getContent());
+
+        PageResponse<ProductDto> pageResponse = PageResponse.of(convertedProducts, products);
+
+        return ResponseEntity.ok(new ApiResponse(1000, "Success", pageResponse));
+    }
     // POST
     // Tạo mới sản phẩm
     @PreAuthorize("hasAnyRole('KETOAN', 'ADMIN')")

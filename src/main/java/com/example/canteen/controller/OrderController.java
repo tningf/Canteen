@@ -19,18 +19,17 @@ public class OrderController {
     private final OrderService orderService;
     private final OrderMapper orderMapper;
 
-    @PostMapping("/order")
-    public ResponseEntity<ApiResponse> createOrder(@RequestParam Long patientId) {
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponse> getAllOrders() {
         try {
-            Order order = orderService.placeOrder(patientId);
-            OrderDto orderDto = orderMapper.convertToDto(order);
+            List<OrderDto> orders = orderService.getAllOrders();
             return ResponseEntity.ok(ApiResponse.builder()
-                    .message("Đặt hàng thành công!")
-                    .data(orderDto)
+                    .message("Lấy tất cả đơn hàng thành công!")
+                    .data(orders)
                     .build());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.builder()
-                    .message("Đặt hàng thất bại! " + e.getMessage())
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.builder()
+                    .message("Oops!" + e.getMessage())
                     .build());
         }
     }
@@ -61,6 +60,52 @@ public class OrderController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.builder()
                     .message("Oops!" + e.getMessage())
+                    .build());
+        }
+    }
+
+    @PostMapping("/order")
+    public ResponseEntity<ApiResponse> createOrder(@RequestParam Long patientId) {
+        try {
+            Order order = orderService.placeOrder(patientId);
+            OrderDto orderDto = orderMapper.convertToDto(order);
+            return ResponseEntity.ok(ApiResponse.builder()
+                    .message("Đặt hàng thành công!")
+                    .data(orderDto)
+                    .build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.builder()
+                    .message("Đặt hàng thất bại! " + e.getMessage())
+                    .build());
+        }
+    }
+
+    @PutMapping("/{orderId}/confirm")
+    public ResponseEntity<ApiResponse> confirmOrder(@PathVariable Long orderId) {
+        try {
+            OrderDto order = orderService.confirmOrder(orderId);
+            return ResponseEntity.ok(ApiResponse.builder()
+                    .message("Xác nhận đơn hàng thành công!")
+                    .data(order)
+                    .build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.builder()
+                    .message("Xác nhận đơn hàng thất bại! " + e.getMessage())
+                    .build());
+        }
+    }
+
+    @PutMapping("/{orderId}/cancel")
+    public ResponseEntity<ApiResponse> cancelOrder(@PathVariable Long orderId) {
+        try {
+            OrderDto order = orderService.cancelOrder(orderId);
+            return ResponseEntity.ok(ApiResponse.builder()
+                    .message("Hủy đơn hàng thành công!")
+                    .data(order)
+                    .build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.builder()
+                    .message("Hủy đơn hàng thất bại! " + e.getMessage())
                     .build());
         }
     }

@@ -4,11 +4,13 @@ package com.example.canteen.service;
 import com.example.canteen.entity.Cart;
 import com.example.canteen.entity.CartItem;
 import com.example.canteen.entity.Product;
+import com.example.canteen.entity.Stock;
 import com.example.canteen.exception.AppException;
 import com.example.canteen.enums.ErrorCode;
 import com.example.canteen.repository.CartItemRepository;
 import com.example.canteen.repository.CartRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +18,7 @@ import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CartItemService {
     private final CartItemRepository cartItemRepository;
     private final CartRepository cartRepository;
@@ -62,24 +65,41 @@ public class CartItemService {
         cartRepository.save(cart);
     }
 
-    public void updateItemQuantity(Long cartId, Long productId, int quantity){
+    @Transactional
+    public void updateItemQuantity(Long cartId, Long cartItemId, int quantity) {
         Cart cart = cartService.getCart(cartId);
-        cart.getItems()
+        if (cart == null) {
+            throw new AppException(ErrorCode.CART_NOT_FOUND);
+        }
+
+        CartItem cartItem = cart.getItems()
                 .stream()
-                .filter(item -> item.getProduct().getId().equals(productId))
+                .filter(item -> item.getId().equals(cartItemId))
                 .findFirst()
-                .ifPresent(item -> {
-                    item.setQuantity(quantity);
-                    item.setUnitPrice(item.getProduct().getPrice());
-                    item.setTotalPrice();
+                .orElseThrow(() -> {
+                    return new AppException(ErrorCode.CART_ITEM_NOT_FOUND);
                 });
+
+        Stock stock = cartItem.getProduct().getStock();
+        if (stock.getQuantity() < quantity) {
+            throw new AppException(ErrorCode.INSUFFICIENT_STOCK);
+        }
+
+        cartItem.setQuantity(quantity);
+        cartItem.setUnitPrice(cartItem.getProduct().getPrice());
+        cartItem.setTotalPrice();
+
+        updateCartTotal(cart);
+
+        cartRepository.save(cart);
+    }
+
+    private void updateCartTotal(Cart cart) {
         BigDecimal totalAmount = cart.getItems()
                 .stream()
                 .map(CartItem::getTotalPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-
         cart.setTotalAmount(totalAmount);
-        cartRepository.save(cart);
     }
 
     public CartItem getCartItem(Long cartId, Long productId){

@@ -19,6 +19,8 @@ import com.example.canteen.repository.ImageRepository;
 import com.example.canteen.repository.ProductRepository;
 import com.example.canteen.repository.StockRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -107,14 +109,6 @@ public class ProductService {
         }
     }
 
-    // Get all products
-//    public List<Product> getAllProducts() {
-//        return productRepository.findAll();
-//    }
-    //Get all products with status true
-    public List<Product> getAllActiveProducts() {
-        return productRepository.findAllByStatusTrue();
-    }
 
     // Get all products by category
     public List<Product> getProductByCategory(String category) {
@@ -145,5 +139,13 @@ public class ProductService {
         productDto.setImages(imageDtos);
 
         return productDto;
+    }
+
+    public Page<Product> getAllActiveProductsPaginated(Pageable pageable) {
+        return productRepository.findAllByStatusTrue(pageable);
+    }
+
+    public Page<Product> getProductByCategoryPaginated(String category, Pageable pageable) {
+        return productRepository.findByCategoryNameAndStatusTrue(category, pageable);
     }
 }
