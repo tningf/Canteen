@@ -64,6 +64,7 @@ public class PatientService {
     public void deletePatient(Long patientId) {
         patientRepository.findById(patientId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        patientRepository.deleteById(patientId);
     }
 
     public Patient findByCardNumber(String cardNumber) {
