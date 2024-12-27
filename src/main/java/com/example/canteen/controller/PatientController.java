@@ -38,9 +38,9 @@ public class PatientController {
 
     @PreAuthorize("hasAnyRole('KETOAN', 'ADMIN')")
     @PostMapping("/add")
-    public ResponseEntity<ApiResponse> createPatient(@RequestBody CreatePatientRequest request) {
+    public ResponseEntity<ApiResponse> addPatient(@RequestBody CreatePatientRequest request) {
         try {
-            Patient patient = patientService.createPatient(request);
+            Patient patient = patientService.addPatient(request);
             PatientDto patientDto = patientMapper.covertToDto(patient);
             patientBalanceService.addBalance(patient.getId());
             return ResponseEntity.ok(ApiResponse.builder()

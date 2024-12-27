@@ -32,21 +32,21 @@ public class StockController {
         List<StockDto> stocks = stockService.getAllStock().stream()
                 .map(stockMapper::toStockDto)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(new ApiResponse("Success", stocks));
+        return ResponseEntity.ok(ApiResponse.builder().data(stocks).build());
     }
 
 
     @PostMapping("/add")
     public ResponseEntity<ApiResponse> addStock(@RequestBody CreateStockRequest request) {
         StockDto stock =  stockService.addStock(request.getProductId(), request.getQuantity());
-        return ResponseEntity.ok(new ApiResponse("Success", stock));
+        return ResponseEntity.ok(ApiResponse.builder().data(stock).build());
     }
 
 
     @PutMapping("/{id}/update")
     public ResponseEntity<ApiResponse> updateStock(@RequestBody StockUpdateRequest request, @PathVariable Long id) {
         StockDto stock = stockService.updateStock(id, request.getQuantity());
-        return ResponseEntity.ok(new ApiResponse("Success", stock));
+        return ResponseEntity.ok(ApiResponse.builder().data(stock).build());
     }
 
 }

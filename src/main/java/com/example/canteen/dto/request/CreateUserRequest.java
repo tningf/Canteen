@@ -9,4 +9,6 @@ public class CreateUserRequest {
     private String username;
     private String password;
     private String fullName;
+    private String roles;
+    private String departments;
 }

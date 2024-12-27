@@ -3,11 +3,13 @@ package com.example.canteen.service;
 import com.example.canteen.dto.UserDto;
 import com.example.canteen.dto.request.CreateUserRequest;
 import com.example.canteen.dto.request.UserUpdateRequest;
+import com.example.canteen.entity.Department;
 import com.example.canteen.entity.User;
 import com.example.canteen.enums.RoleName;
 import com.example.canteen.exception.AppException;
 import com.example.canteen.enums.ErrorCode;
 import com.example.canteen.mapper.UserMapper;
+import com.example.canteen.repository.DepartmentRepository;
 import com.example.canteen.repository.RoleRepository;
 import com.example.canteen.repository.UserRepository;
 import jakarta.validation.constraints.NotBlank;
@@ -32,21 +34,29 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final DepartmentRepository departmentRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
     public User createUser(CreateUserRequest request){
-        return Optional.of(request).filter(user -> !userRepository
-                        .existsByUsername(user.getUsername()))
-                .map(req -> {
-                    User user = new User();
-                    user.setUsername(request.getUsername());
-                    user.setPassword(passwordEncoder.encode(request.getPassword()));
-                    user.setFullName(request.getFullName());
-                    user.setStatus(true);
-                    user.setCreateDate(LocalDateTime.now());
-                    return userRepository.save(user);
-                }).orElseThrow(() -> new AppException(ErrorCode.USER_ALREADY_EXISTS));
+       if (userRepository.existsByUsername(request.getUsername())) {
+           throw new AppException(ErrorCode.USER_ALREADY_EXISTS);
+       }
+        Department department = departmentRepository.findByDepartmentName(request.getDepartments());
+        if (department == null) {
+            department = new Department();
+            department.setDepartmentName(request.getDepartments());
+            department = departmentRepository.save(department);
+        }
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setFullName(request.getFullName());
+        user.setCreateDate(LocalDateTime.now());
+        user.setStatus(true);
+        user.setRoles(roleRepository.findAllByName(RoleName.valueOf(request.getRoles())));
+        user.getDepartments().add(department);
+        return userRepository.save(user);
     }
 
     @PostAuthorize("returnObject.username == authentication.name")
@@ -92,6 +102,11 @@ public class UserService {
         user.setFullName(request.getFullName());
         user.setStatus(true);
 
+        if (request.getDepartments() != null && !request.getDepartments().isEmpty()) {
+            Collection<Department> departments = addDepartmentsByName(request.getDepartments());
+            user.setDepartments(departments);
+        }
+
         if (request.getRoles() != null && !request.getRoles().trim().isEmpty()) {
             RoleName newRole = validateAndGetRole(request.getRoles());
             if (!isAdmin && newRole == RoleName.ROLE_ADMIN) {
@@ -104,6 +119,19 @@ public class UserService {
         return userMapper.toUserResponse(userRepository.save(user));
     }).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 }
+    private Collection<Department> addDepartmentsByName(Collection<String> departmentNames) {
+        return departmentNames.stream()
+                .map(this::getOrCreateDepartment)
+                .collect(Collectors.toSet());
+    }
+    private Department getOrCreateDepartment(String departmentName) {
+        return Optional.ofNullable(departmentRepository.findByDepartmentName(departmentName))
+                .orElseGet(() -> {
+                    Department newDepartment = new Department();
+                    newDepartment.setDepartmentName(departmentName);
+                    return departmentRepository.save(newDepartment);
+                });
+    }
 
     private RoleName validateAndGetRole(String roleStr) {
         try {

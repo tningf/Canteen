@@ -66,5 +66,4 @@ public class Patient {
             inverseJoinColumns = @JoinColumn(name = "Department_ID", referencedColumnName = "Department_ID"))
     private Collection<Department> departments = new HashSet<>();
 
-
 }

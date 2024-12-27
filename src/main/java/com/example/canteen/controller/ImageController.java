@@ -32,10 +32,10 @@ public class ImageController {
     public ResponseEntity<ApiResponse> saveImages(@RequestParam List<MultipartFile> files,@RequestParam Long productId) {
         try {
             List<ImageDto> imageDtos = imageService.saveImages(files, productId);
-            return ResponseEntity.ok(new ApiResponse("Upload thành công!",imageDtos));
+            return ResponseEntity.ok(ApiResponse.builder().message("Upload ảnh thành công!").data(imageDtos).build());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse(ErrorCode.FAIL_TO_UPLOAD_IMAGE.getMessage(),null));
+                    .body(ApiResponse.builder().message(ErrorCode.FAIL_TO_UPLOAD_IMAGE.getMessage()).build());
         }
     }
 
@@ -54,13 +54,14 @@ public class ImageController {
         try {
             if(image != null){
                 imageService.updateImage(file,imageId);
-                return ResponseEntity
-                        .ok(new ApiResponse("Cập nhật ảnh thành công!",null));
+                return ResponseEntity.ok(ApiResponse.builder().message("Cập nhật ảnh thành công!").build());
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(ErrorCode.FAIL_TO_UPLOAD_IMAGE.getMessage(),null));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.builder().message(ErrorCode.FAIL_TO_UPLOAD_IMAGE.getMessage()).build());
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(ErrorCode.FAIL_TO_UPLOAD_IMAGE.getMessage(),null));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.builder().message("Cập nhật ảnh thất bại!").build());
     }
     @PreAuthorize("hasAnyRole('KETOAN', 'ADMIN')")
     @DeleteMapping("/image/{imageId}/delete")
@@ -69,12 +70,14 @@ public class ImageController {
         try {
             if(image != null){
                 imageService.deleteImageById(imageId);
-                return ResponseEntity.ok(new ApiResponse("Xóa ảnh thành công!",null));
+                return ResponseEntity.ok(ApiResponse.builder().message("Xóa ảnh thành công!").build());
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(ErrorCode.FAIL_TO_UPLOAD_IMAGE.getMessage(),null));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.builder().message(ErrorCode.FAIL_TO_UPLOAD_IMAGE.getMessage()).build());
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("Xóa ảnh thất bại!",null));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.builder().message("Xóa ảnh thất bại!").build());
     }
 
 }

@@ -65,7 +65,10 @@ public class ProductController {
     public ResponseEntity<ApiResponse> getProductById(@PathVariable Long id) {
         Product product = productService.getProductById(id);
         ProductDto productDto = productService.covertToDto(product);
-        return ResponseEntity.ok(new ApiResponse("Success", productDto));
+        return ResponseEntity.ok(ApiResponse.builder()
+                .message("Lấy dữ liệu thành công")
+                .data(productDto)
+                .build());
     }
     // Xem sản phẩm theo category
     @GetMapping("/category/{category}/all")
@@ -85,7 +88,10 @@ public class ProductController {
 
         PageResponse<ProductDto> pageResponse = PageResponse.of(convertedProducts, products);
 
-        return ResponseEntity.ok(new ApiResponse("Success", pageResponse));
+        return ResponseEntity.ok(ApiResponse.builder()
+                .message("Lấy dữ liệu thành công")
+                .data(pageResponse)
+                .build());
     }
     // POST
     // Tạo mới sản phẩm
@@ -114,7 +120,10 @@ public class ProductController {
                 throw new AppException(ErrorCode.FAIL_TO_UPLOAD_IMAGE);
             }
         }
-        return ResponseEntity.ok(new ApiResponse("Thêm thành công!", productDto));
+        return ResponseEntity.ok(ApiResponse.builder()
+                .message("Thêm sản phẩm thành công")
+                .data(productDto)
+                .build());
     }
 
     // PUT
@@ -143,7 +152,10 @@ public class ProductController {
                 throw new AppException(ErrorCode.FAIL_TO_UPLOAD_IMAGE);
             }
         }
-        return ResponseEntity.ok(new ApiResponse("Cập nhật thành công", productDto));
+        return ResponseEntity.ok(ApiResponse.builder()
+                .message("Cập nhật sản phẩm thành công")
+                .data(productDto)
+                .build());
     }
     // DELETE
     // Xóa mềm sản phẩm
@@ -151,6 +163,8 @@ public class ProductController {
     @DeleteMapping("/{productId}")
     public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Long productId) {
         productService.deleteProduct(productId);
-        return ResponseEntity.ok(new ApiResponse("Xóa thành công!", productId));
+        return ResponseEntity.ok(ApiResponse.builder()
+                .message("Xóa sản phẩm thành công")
+                .build());
     }
 }

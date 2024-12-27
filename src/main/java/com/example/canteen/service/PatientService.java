@@ -3,7 +3,6 @@ package com.example.canteen.service;
 import com.example.canteen.dto.PatientDto;
 import com.example.canteen.dto.request.CreatePatientRequest;
 import com.example.canteen.dto.request.PatientUpdateRequest;
-import com.example.canteen.entity.Category;
 import com.example.canteen.entity.Department;
 import com.example.canteen.entity.Patient;
 import com.example.canteen.exception.AppException;
@@ -37,28 +36,30 @@ public class PatientService {
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
     }
 
-    public Patient createPatient(CreatePatientRequest request) {
-        return Optional.of(request)
-                .filter(patient -> !patientRepository.existsByCardNumber(patient.getCardNumber()))
-                .map(req -> {
-                    Patient patient = new Patient();
-                    patient.setCardNumber(request.getCardNumber());
-                    patient.setFullName(request.getFullName());
-                    patient.setEmail(request.getEmail());
-                    patient.setPhoneNumber(request.getPhoneNumber());
-                    patient.setAddress(request.getAddress());
-                    patient.setRoom(request.getRoom());
-                    patient.setCreateDate(LocalDateTime.now());
+    public Patient addPatient(CreatePatientRequest request) {
+        if (patientRepository.existsByCardNumber(request.getCardNumber())) {
+            throw new AppException(ErrorCode.USER_ALREADY_EXISTS);
+        }
 
-                    Department department = departmentRepository.findByDepartmentName(request.getDepartment())
-                            .orElseGet(() -> {
-                                Department newDepartment = new Department(request.getDepartment());
-                                return departmentRepository.save(newDepartment);
-                            });
+        Department department = departmentRepository.findByDepartmentName(request.getDepartments());
+        if (department == null) {
+            department = new Department();
+            department.setDepartmentName(request.getDepartments());
+            department = departmentRepository.save(department);
+        }
 
-                    request.setDepartment(String.valueOf(department));
-                    return patientRepository.save(patient);
-                }).orElseThrow(() -> new AppException(ErrorCode.USER_ALREADY_EXISTS));
+        Patient patient = new Patient();
+        patient.setCardNumber(request.getCardNumber());
+        patient.setFullName(request.getFullName());
+        patient.setEmail(request.getEmail());
+        patient.setPhoneNumber(request.getPhoneNumber());
+        patient.setAddress(request.getAddress());
+        patient.setRoom(request.getRoom());
+        patient.setCreateDate(LocalDateTime.now());
+
+        patient.getDepartments().add(department);
+
+        return patientRepository.save(patient);
     }
 
     public Patient updatePatient(PatientUpdateRequest request, Long patientId) {
@@ -71,8 +72,8 @@ public class PatientService {
             Optional.ofNullable(request.getRoom()).ifPresent(existingPatient::setRoom);
 
             // Update departments if provided in the request
-            if (request.getDepartmentNames() != null && !request.getDepartmentNames().isEmpty()) {
-                Collection<Department> departments = addDepartmentsByName(request.getDepartmentNames());
+            if (request.getDepartments() != null && !request.getDepartments().isEmpty()) {
+                Collection<Department> departments = addDepartmentsByName(request.getDepartments());
                 existingPatient.setDepartments(departments);
             }
 
@@ -90,7 +91,7 @@ public class PatientService {
     }
 
     private Department getOrCreateDepartment(String departmentName) {
-        return departmentRepository.findByDepartmentName(departmentName)
+        return Optional.ofNullable(departmentRepository.findByDepartmentName(departmentName))
                 .orElseGet(() -> {
                     Department newDepartment = new Department();
                     newDepartment.setDepartmentName(departmentName);

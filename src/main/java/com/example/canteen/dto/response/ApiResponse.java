@@ -17,7 +17,4 @@ public class ApiResponse {
     private boolean success = true;
     private String message;
     private Object data;
-
-    public ApiResponse(String message, Object data) {
-    }
 }

@@ -2,9 +2,12 @@ package com.example.canteen.dto.request;
 
 import lombok.Data;
 
+import java.util.Collection;
+
 @Data
 public class UserUpdateRequest {
     private Long id;
     private String fullName;
-    String roles;
+    private String roles;
+    private Collection<String> departments;
 }

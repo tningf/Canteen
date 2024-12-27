@@ -11,5 +11,5 @@ public class PatientUpdateRequest {
     private String phoneNumber;
     private String address;
     private String room;
-    private Collection<String> departmentNames;
+    private Collection<String> departments;
 }

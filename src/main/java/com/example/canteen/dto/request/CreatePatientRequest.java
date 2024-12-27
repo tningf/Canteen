@@ -11,5 +11,5 @@ public class CreatePatientRequest {
     private String phoneNumber;
     private String address;
     private String room;
-    private String department;
+    private String departments;
 }
