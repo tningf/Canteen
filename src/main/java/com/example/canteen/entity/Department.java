@@ -30,4 +30,7 @@ public class Department {
 
     @ManyToMany(mappedBy = "departments")
     private Collection<Patient> patients = new HashSet<>();
+
+    public Department(String department) {
+    }
 }

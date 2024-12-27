@@ -40,7 +40,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setCharacterEncoding("UTF-8");
 
         ApiResponse apiResponse = ApiResponse.builder()
-                .code(errorCode.getCode())
+                .success(false)
                 .message(errorMessage)
                 .build();
 

@@ -26,7 +26,7 @@ public class Patient {
     private Long id;
 
     @NaturalId
-    @Column(name = "CardNumber")
+    @Column(name = "CardNumber", unique = true)
     private String cardNumber;
 
     @Column(name = "FullName", columnDefinition = "NVARCHAR(255)")
@@ -40,6 +40,9 @@ public class Patient {
 
     @Column(name = "Address", columnDefinition = "NVARCHAR(255)")
     private String address;
+
+    @Column(name = "Room", columnDefinition = "NVARCHAR(255)")
+    private String room;
 
     @Column(name = "CREATE_AT", columnDefinition = "DATETIME")
     private LocalDateTime createDate;
@@ -62,4 +65,6 @@ public class Patient {
             joinColumns = @JoinColumn(name = "Patient_ID", referencedColumnName = "Patient_ID"),
             inverseJoinColumns = @JoinColumn(name = "Department_ID", referencedColumnName = "Department_ID"))
     private Collection<Department> departments = new HashSet<>();
+
+
 }

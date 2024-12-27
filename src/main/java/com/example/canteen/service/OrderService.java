@@ -184,6 +184,7 @@ public class OrderService {
             stockRepository.save(stock);
         }
     }
+
     private void updatePatientBalance(Order order) {
         Patient patient = order.getPatient();
         BigDecimal newBalance = patient.getPatientBalance().getBalance().subtract(order.getTotalAmount());

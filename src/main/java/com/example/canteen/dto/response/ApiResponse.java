@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,8 +14,10 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse {
     @Builder.Default
-    private int code = 1000;
+    private boolean success = true;
     private String message;
     private Object data;
 
+    public ApiResponse(String message, Object data) {
+    }
 }

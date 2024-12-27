@@ -3,6 +3,7 @@ package com.example.canteen.dto;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 @Data
@@ -13,9 +14,10 @@ public class PatientDto {
     private String email;
     private String phoneNumber;
     private String address;
+    private String room;
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
     private List<OrderDto> orders;
     private CartDto cart;
-
+    private Collection<DepartmentDto> departments;
 }

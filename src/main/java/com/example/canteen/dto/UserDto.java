@@ -19,4 +19,5 @@ public class UserDto {
     private LocalDateTime lastLoginTime;
     private String lastLoginIp;
     private Collection<RoleDto> roles;
+    private Collection<DepartmentDto> departments;
 }

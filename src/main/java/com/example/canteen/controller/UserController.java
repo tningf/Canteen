@@ -52,7 +52,6 @@ public class UserController {
     @GetMapping("/my-info")
     public ApiResponse myInfo() {
         return ApiResponse.builder()
-                .code(1000)
                 .data(userService.getMyInfo())
                 .build();
     }

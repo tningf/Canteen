@@ -46,7 +46,6 @@ public class StatisticsController {
             }
 
             return ResponseEntity.ok(ApiResponse.builder()
-                    .code(1000)
                     .message("Lấy thống kê thành công")
                     .data(statistics)
                     .build());
@@ -55,14 +54,12 @@ public class StatisticsController {
             log.error("Error getting order statistics: {}", e.getMessage());
             return ResponseEntity.status(e.getErrorCode().getHttpStatusCode())
                     .body(ApiResponse.builder()
-                            .code(e.getErrorCode().getCode())
                             .message(e.getErrorCode().getMessage())
                             .build());
         } catch (Exception e) {
             log.error("Unexpected error getting order statistics", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.builder()
-                            .code(5000)
                             .message("Có lỗi xảy ra khi lấy thống kê")
                             .build());
         }
@@ -71,7 +68,6 @@ public class StatisticsController {
     public ResponseEntity<ApiResponse> getDetailedStatistics() {
         List<SaleItemStatisticsDto> detailedStats = statisticsService.generateDetailedSalesStatistics();
         return ResponseEntity.ok(ApiResponse.builder()
-                .code(1000)
                 .message("Lấy thống kê chi tiết thành công")
                 .data(detailedStats)
                 .build());

@@ -65,7 +65,7 @@ public class ProductController {
     public ResponseEntity<ApiResponse> getProductById(@PathVariable Long id) {
         Product product = productService.getProductById(id);
         ProductDto productDto = productService.covertToDto(product);
-        return ResponseEntity.ok(new ApiResponse(1000, "Success", productDto));
+        return ResponseEntity.ok(new ApiResponse("Success", productDto));
     }
     // Xem sản phẩm theo category
     @GetMapping("/category/{category}/all")
@@ -85,7 +85,7 @@ public class ProductController {
 
         PageResponse<ProductDto> pageResponse = PageResponse.of(convertedProducts, products);
 
-        return ResponseEntity.ok(new ApiResponse(1000, "Success", pageResponse));
+        return ResponseEntity.ok(new ApiResponse("Success", pageResponse));
     }
     // POST
     // Tạo mới sản phẩm
@@ -114,7 +114,7 @@ public class ProductController {
                 throw new AppException(ErrorCode.FAIL_TO_UPLOAD_IMAGE);
             }
         }
-        return ResponseEntity.ok(new ApiResponse(1000, "Thêm thành công!", productDto));
+        return ResponseEntity.ok(new ApiResponse("Thêm thành công!", productDto));
     }
 
     // PUT
@@ -143,7 +143,7 @@ public class ProductController {
                 throw new AppException(ErrorCode.FAIL_TO_UPLOAD_IMAGE);
             }
         }
-        return ResponseEntity.ok(new ApiResponse(1000, "Cập nhật thành công", productDto));
+        return ResponseEntity.ok(new ApiResponse("Cập nhật thành công", productDto));
     }
     // DELETE
     // Xóa mềm sản phẩm
@@ -151,6 +151,6 @@ public class ProductController {
     @DeleteMapping("/{productId}")
     public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Long productId) {
         productService.deleteProduct(productId);
-        return ResponseEntity.ok(new ApiResponse(1000, "Xóa thành công!", productId));
+        return ResponseEntity.ok(new ApiResponse("Xóa thành công!", productId));
     }
 }

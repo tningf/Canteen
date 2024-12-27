@@ -36,7 +36,6 @@ public class CartItemController {
         } catch (Exception e) {
             return ResponseEntity.status(ErrorCode.CART_ITEM_NOT_FOUND.getHttpStatusCode()).body(ApiResponse
                     .builder()
-                    .code(ErrorCode.CART_ITEM_NOT_FOUND.getCode())
                     .message(e.getMessage())
                     .build());
         }
@@ -53,7 +52,7 @@ public class CartItemController {
         } catch (Exception e) {
             return ResponseEntity.status(ErrorCode.CART_ITEM_NOT_FOUND.getHttpStatusCode()).body(ApiResponse
                     .builder()
-                    .code(ErrorCode.CART_ITEM_NOT_FOUND.getCode())
+
                     .message(ErrorCode.CART_ITEM_NOT_FOUND.getMessage())
                     .build());
         }
@@ -70,7 +69,6 @@ public class CartItemController {
         } catch (Exception e) {
             return ResponseEntity.status(ErrorCode.CART_ITEM_NOT_FOUND.getHttpStatusCode()).body(ApiResponse
                     .builder()
-                    .code(ErrorCode.CART_ITEM_NOT_FOUND.getCode())
                     .message(ErrorCode.CART_ITEM_NOT_FOUND.getMessage())
                     .build());
         }

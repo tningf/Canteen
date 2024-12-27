@@ -24,9 +24,10 @@ public class CategoryController {
     public ResponseEntity<ApiResponse> getAllCategories() {
         try {
             List<Category> categories = categoryService.getAllActiveCategories();
-            return ResponseEntity.ok(new ApiResponse(1000, "Thành công!", categories));
+            return ResponseEntity.ok(new ApiResponse("Thành công!", categories));
         } catch (Exception e) {
-            return ResponseEntity.status(ErrorCode.UNKNOWN.getHttpStatusCode()).body(new ApiResponse(ErrorCode.UNKNOWN.getCode(), ErrorCode.UNKNOWN.getMessage(), null));
+            return ResponseEntity.status(ErrorCode.UNKNOWN.getHttpStatusCode())
+                    .body(new ApiResponse(ErrorCode.UNKNOWN.getSuccess(), ErrorCode.UNKNOWN.getMessage(), null));
         }
     }
 
@@ -34,30 +35,30 @@ public class CategoryController {
     @PostMapping("/add")
     public ResponseEntity<ApiResponse> addCategory(@RequestBody Category name) {
         Category newCategory = categoryService.addCategory(name);
-        return ResponseEntity.ok(new ApiResponse(1000, "Thành công!", newCategory));
+        return ResponseEntity.ok(new ApiResponse("Thành công!", newCategory));
     }
 
     @GetMapping("/category/{id}/get-by-id")
     public ResponseEntity<ApiResponse> getCategoryById(@PathVariable Long id) {
         Category category = categoryService.getCategoryById(id);
-        return ResponseEntity.ok(new ApiResponse(1000, "Tìm thấy!", category));
+        return ResponseEntity.ok(new ApiResponse("Tìm thấy!", category));
     }
 
     @GetMapping("category/{name}/category")
     public ResponseEntity<ApiResponse> getCategoryByName(@PathVariable String name) {
         Category category = categoryService.getCategoryByName(name);
-        return ResponseEntity.ok(new ApiResponse(1000, "Tìm thấy!", category));
+        return ResponseEntity.ok(new ApiResponse("Tìm thấy!", category));
     }
     @PreAuthorize("hasAnyRole('KETOAN', 'ADMIN')")
     @PutMapping("category/{id}/update")
     public ResponseEntity<ApiResponse> updateCategory( @PathVariable Long id, @RequestBody Category category) {
         Category updatedCategory = categoryService.updateCategory(category, id);
-        return ResponseEntity.ok(new ApiResponse(1000, "Cập nhật danh mục sản phẩm thành công!", updatedCategory));
+        return ResponseEntity.ok(new ApiResponse("Cập nhật danh mục sản phẩm thành công!", updatedCategory));
     }
     @PreAuthorize("hasAnyRole('KETOAN', 'ADMIN')")
     @DeleteMapping("category/{id}/delete")
     public ResponseEntity<ApiResponse> deleteCategory(@PathVariable Long id) {
         categoryService.deleteCategory(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ApiResponse(1000, "Xóa danh mục sản phẩm thành công!", null));
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ApiResponse("Xóa danh mục sản phẩm thành công!", null));
     }
 }

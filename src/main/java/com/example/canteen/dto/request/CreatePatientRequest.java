@@ -10,4 +10,6 @@ public class CreatePatientRequest {
     private String email;
     private String phoneNumber;
     private String address;
+    private String room;
+    private String department;
 }
