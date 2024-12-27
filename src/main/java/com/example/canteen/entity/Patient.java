@@ -8,6 +8,8 @@ import lombok.Setter;
 import org.hibernate.annotations.NaturalId;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -53,4 +55,11 @@ public class Patient {
 
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Order> orders;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {
+            CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(name = "tb_Patient_Department",
+            joinColumns = @JoinColumn(name = "Patient_ID", referencedColumnName = "Patient_ID"),
+            inverseJoinColumns = @JoinColumn(name = "Department_ID", referencedColumnName = "Department_ID"))
+    private Collection<Department> departments = new HashSet<>();
 }

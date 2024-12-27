@@ -21,7 +21,7 @@ public class Role {
     @Column(name = "Role_ID")
     private Long id;
 
-    @Column(name = "Role_Name",columnDefinition = "NVARCHAR(255)")
+    @Column(name = "Role_Name")
     @Enumerated(EnumType.STRING)
     private RoleName name;
 
@@ -30,6 +30,4 @@ public class Role {
     }
     @ManyToMany(mappedBy = "roles")
     private Collection<User> users = new HashSet<>();
-
-
 }

@@ -9,7 +9,6 @@ import com.example.canteen.mapper.OrderMapper;
 import com.example.canteen.repository.OrderRepository;
 import com.example.canteen.repository.StockRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +19,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderValidator orderValidator;
@@ -37,21 +35,18 @@ public class OrderService {
     @Transactional
     public Order placeOrder(Long patientId) {
         Cart cart = cartService.getCartByPatientId(patientId);
-
+        //Check stock
         validateStockAvailability(cart);
-
+        //Create order
         Order order = createOrder(cart);
         List<OrderItem> orderItemList = createOrderItems(order, cart);
         order.setOrderItems(new HashSet<>(orderItemList));
         order.setTotalAmount(calculateTotalPrice(orderItemList));
-
-
-        if (order.getTotalAmount().compareTo(cart.getPatient().getPatientBalance().getBalance()) > 0) {
-            throw new AppException(ErrorCode.INSUFFICIENT_BALANCE);
-        }
-
+        //Check balance
+        validateBalance(order, cart);
+        //Save order
         Order savedOrder = orderRepository.save(order);
-
+        //Clear cart
         cartService.clearCart(cart.getId());
 
         return savedOrder;
@@ -95,6 +90,13 @@ public class OrderService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
+
+    private void validateBalance(Order order, Cart cart) {
+        if (order.getTotalAmount().compareTo(cart.getPatient().getPatientBalance().getBalance()) > 0) {
+            throw new AppException(ErrorCode.INSUFFICIENT_BALANCE);
+        }
+    }
+
     public OrderDto getOrder(Long orderId) {
         return orderRepository.findById(orderId)
                 .map(orderMapper::convertToDto)
@@ -117,60 +119,45 @@ public class OrderService {
 
     @Transactional
     public OrderDto confirmOrder(Long orderId) {
-        try {
-            String currentUser = userContextService.getCurrentUser();
-            log.info("Starting order confirmation process. Order ID: {}, User: {}",
-                    orderId, currentUser);
+        //Get current user logged in
+        String currentUser = userContextService.getCurrentUser();
+        //Get order by id and validate
+        Order order = getOrderById(orderId);
+        orderValidator.validateConfirmation(order);
+        //Update stock when confirm order
+        updateStockForConfirmation(order);
+        // Update patient balance
+        updatePatientBalance(order);
+        //Update order information
+        order.setOrderStatus(OrderStatus.CONFIRMED);
+        order.setConfirmedAt(LocalDateTime.now());
+        order.setConfirmedBy(currentUser);
+        //Save order
+        Order confirmedOrder = orderRepository.save(order);
 
-            Order order = getOrderById(orderId);
-            orderValidator.validateConfirmation(order);
-
-            updateStockForConfirmation(order);
-
-            // Subtract total amount from patient balance
-            BigDecimal totalAmount = order.getTotalAmount();
-            Patient patient = order.getPatient();
-            BigDecimal newBalance = patient.getPatientBalance().getBalance().subtract(totalAmount);
-            patient.getPatientBalance().setBalance(newBalance);
-
-            order.setOrderStatus(OrderStatus.CONFIRMED);
-            order.setConfirmedAt(LocalDateTime.now());
-            order.setConfirmedBy(currentUser);
-
-            Order confirmedOrder = orderRepository.save(order);
-            log.info("Order confirmed successfully. Order ID: {}", orderId);
-
-            return orderMapper.convertToDto(confirmedOrder);
-        } catch (Exception e) {
-            log.error("Error confirming order: {}", orderId, e);
-            throw e;
-        }
+        return orderMapper.convertToDto(confirmedOrder);
     }
 
     @Transactional
     public OrderDto cancelOrder(Long orderId) {
-        try {
-            String currentUser = userContextService.getCurrentUser();
-
-            Order order = getOrderById(orderId);
-            orderValidator.validateCancellation(order);
-
-            if (order.getOrderStatus() == OrderStatus.CONFIRMED) {
-                restorePaymentForCancellation(order);
-                restoreStockForCancellation(order);
-            }
-
-            order.setOrderStatus(OrderStatus.CANCELED);
-            order.setCanceledAt(LocalDateTime.now());
-            order.setCanceledBy(currentUser);
-
-            Order canceledOrder = orderRepository.save(order);
-
-            return orderMapper.convertToDto(canceledOrder);
-        } catch (Exception e) {
-            log.error("Error canceling order: {}", orderId, e);
-            throw e;
+        //Get current user logged in
+        String currentUser = userContextService.getCurrentUser();
+        //Get order by id and validate
+        Order order = getOrderById(orderId);
+        orderValidator.validateCancellation(order);
+        //Restore patient balance and stock when cancel order confirmed
+        if (order.getOrderStatus() == OrderStatus.CONFIRMED) {
+            restorePaymentForCancellation(order);
+            restoreStockForCancellation(order);
         }
+        //Update order information
+        order.setOrderStatus(OrderStatus.CANCELED);
+        order.setCanceledAt(LocalDateTime.now());
+        order.setCanceledBy(currentUser);
+        //Save order
+        Order canceledOrder = orderRepository.save(order);
+
+        return orderMapper.convertToDto(canceledOrder);
     }
 
     private void restorePaymentForCancellation(Order order) {
@@ -196,5 +183,10 @@ public class OrderService {
             stock.setQuantity(newQuantity);
             stockRepository.save(stock);
         }
+    }
+    private void updatePatientBalance(Order order) {
+        Patient patient = order.getPatient();
+        BigDecimal newBalance = patient.getPatientBalance().getBalance().subtract(order.getTotalAmount());
+        patient.getPatientBalance().setBalance(newBalance);
     }
 }

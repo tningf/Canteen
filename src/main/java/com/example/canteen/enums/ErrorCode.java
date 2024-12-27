@@ -15,6 +15,7 @@ public enum ErrorCode {
     USER_ALREADY_EXISTS(1002,"User đã tồn tại!", HttpStatus.CONFLICT),
     UNAUTHENTICATED(1003, "Bạn chưa xác thực!", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(1004, "Bạn không có quyền truy cập!", HttpStatus.FORBIDDEN),
+    UNAUTHORIZED_ROLE_MODIFICATION(1005,"Bạn không có đủ quyền!", HttpStatus.FORBIDDEN),
 
     PRODUCT_NOT_FOUND(2001, "Sản phẩm không tồn tại!", HttpStatus.NOT_FOUND),
     PRODUCT_ALREADY_EXISTS(2002, "Sản phẩm đã tồn tại!", HttpStatus.CONFLICT),
@@ -29,7 +30,7 @@ public enum ErrorCode {
     CART_ALREADY_EXISTS(5002,"Giỏ hàng đã tồn tại!", HttpStatus.CONFLICT),
     CART_ITEM_NOT_FOUND(5003,"Không tìm thấy sản phẩm trong giỏ hàng!", HttpStatus.NOT_FOUND),
     CART_ITEM_ALREADY_EXISTS(5004,"Sản phẩm đã tồn tại trong giỏ hàng!", HttpStatus.CONFLICT),
-    INVALID_QUANTITY(5005,"Số lượng sản phẩm phải lớn hơn 0" ,HttpStatus.BAD_REQUEST),
+    INVALID_QUANTITY(5005,"Số lượng sản phẩm phải lớn hơn 0!" ,HttpStatus.BAD_REQUEST),
     CART_UPDATE_FAILED(5006,"Cập nhật giỏ hàng thất bại!" ,HttpStatus.INTERNAL_SERVER_ERROR),
 
     ORDER_NOT_FOUND(6001,"Không tìm thấy Order", HttpStatus.NOT_FOUND ),
@@ -41,7 +42,11 @@ public enum ErrorCode {
     PATIENT_NOT_FOUND(7001,"Không tìm thấy bệnh nhân!", HttpStatus.NOT_FOUND),
     INSUFFICIENT_BALANCE(8001, "Không đủ số dư!", HttpStatus.BAD_REQUEST),
     INSUFFICIENT_STOCK(8002,"Sản phẩm đã hết hàng hoặc số lượng mua lớn hơn sản phẩm còn lại!" , HttpStatus.BAD_REQUEST),
-    ;
+
+    INVALID_DATE_RANGE(9001, "Khoảng thời gian không hợp lệ", HttpStatus.BAD_REQUEST),
+    FUTURE_DATE_NOT_ALLOWED(9002, "Không thể thống kê cho ngày trong tương lai", HttpStatus.BAD_REQUEST),
+
+    INVALID_REQUEST(9003,"Request không hợp lệ" , HttpStatus.BAD_REQUEST),;
 
 
 

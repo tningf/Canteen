@@ -11,7 +11,4 @@ import org.mapstruct.MappingTarget;
 public interface UserMapper {
     @Mapping(target = "userId", source = "id")
     UserDto toUserResponse(User user);
-
-    @Mapping(target = "roles", ignore = true)
-    void updateUser(@MappingTarget User user, UserUpdateRequest request);
 }
