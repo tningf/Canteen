@@ -1,7 +1,6 @@
 package com.example.canteen.controller;
 
-import com.example.canteen.dto.OrderStatistics;
-import com.example.canteen.dto.SaleProductStatistics;
+import com.example.canteen.dto.statistics.*;
 import com.example.canteen.dto.response.ApiResponse;
 import com.example.canteen.exception.AppException;
 import com.example.canteen.service.StatisticsDashboardService;
@@ -28,6 +27,8 @@ import java.util.List;
 public class StatisticsController {
     private final StatisticsDashboardService statisticsDashboardService;
     private final StatisticsProductService statisticsProductService;
+
+
 
     @GetMapping("/dashboard")
     public ResponseEntity<ApiResponse> getOrderStatistics(
@@ -66,6 +67,7 @@ public class StatisticsController {
                             .build());
         }
     }
+
     @GetMapping("/sale-product")
     public ResponseEntity<ApiResponse> getSaleStatistics(
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
@@ -75,6 +77,43 @@ public class StatisticsController {
         return ResponseEntity.ok(ApiResponse.builder()
                 .message("Lấy thống kê bán hàng thành công")
                 .data(saleStats)
+                .build());
+    }
+
+    @GetMapping("/staff-sale-statistics")
+    public ResponseEntity<ApiResponse> getStaffSaleStatistics(
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            @RequestParam(required = false) String username) {
+        List<StaffSaleStatistics> staffStats = statisticsProductService.generateStaffSaleStatistics(startDate, endDate, username);
+        return ResponseEntity.ok(ApiResponse.builder()
+                .message("Lấy thống kê bán hàng theo nhân viên thành công")
+                .data(staffStats)
+                .build());
+    }
+
+    @GetMapping("/patient-buy-statistics")
+    public ResponseEntity<ApiResponse> getPatientSaleStatistics(
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            @RequestParam(required = false) String cardNumber) {
+        List<PatientBuyStatistics> patientStats = statisticsProductService.generatePatientBuyStatistics(startDate, endDate, cardNumber);
+        return ResponseEntity.ok(ApiResponse.builder()
+                .message("Lấy thống kê bán hàng theo bệnh nhân thành công")
+                .data(patientStats)
+                .build());
+    }
+
+    @GetMapping("/department-sale-statistics")
+    public ResponseEntity<ApiResponse> getDepartmentSaleStatistics(
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            @RequestParam(required = false) String departmentName) {
+        List<DepartmentSaleStatistics> departmentStats = statisticsProductService
+                .generateDepartmentSaleStatistics(startDate, endDate, departmentName);
+        return ResponseEntity.ok(ApiResponse.builder()
+                .message("Lấy thống kê bán hàng theo khoa thành công")
+                .data(departmentStats)
                 .build());
     }
 }

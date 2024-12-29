@@ -1,6 +1,6 @@
 package com.example.canteen.service;
 
-import com.example.canteen.dto.UserDto;
+import com.example.canteen.dto.dtos.UserDto;
 import com.example.canteen.dto.request.CreateUserRequest;
 import com.example.canteen.dto.request.UserUpdateRequest;
 import com.example.canteen.entity.Department;

@@ -1,6 +1,5 @@
-package com.example.canteen.dto;
+package com.example.canteen.dto.dtos;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

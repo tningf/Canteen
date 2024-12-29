@@ -1,7 +1,7 @@
 package com.example.canteen.service;
 
 
-import com.example.canteen.dto.ImageDto;
+import com.example.canteen.dto.dtos.ImageDto;
 import com.example.canteen.entity.Image;
 import com.example.canteen.entity.Product;
 import com.example.canteen.exception.AppException;

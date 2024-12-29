@@ -1,4 +1,4 @@
-package com.example.canteen.dto;
+package com.example.canteen.dto.statistics;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

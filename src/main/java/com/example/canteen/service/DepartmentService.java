@@ -1,6 +1,6 @@
 package com.example.canteen.service;
 
-import com.example.canteen.dto.DepartmentDto;
+import com.example.canteen.dto.dtos.DepartmentDto;
 import com.example.canteen.repository.DepartmentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

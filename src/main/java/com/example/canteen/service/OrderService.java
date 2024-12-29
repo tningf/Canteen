@@ -1,6 +1,6 @@
 package com.example.canteen.service;
 
-import com.example.canteen.dto.OrderDto;
+import com.example.canteen.dto.dtos.OrderDto;
 import com.example.canteen.entity.*;
 import com.example.canteen.enums.ErrorCode;
 import com.example.canteen.enums.OrderStatus;

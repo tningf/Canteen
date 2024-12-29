@@ -1,6 +1,6 @@
 package com.example.canteen.service;
 
-import com.example.canteen.dto.PatientDto;
+import com.example.canteen.dto.dtos.PatientDto;
 import com.example.canteen.dto.request.CreatePatientRequest;
 import com.example.canteen.dto.request.PatientUpdateRequest;
 import com.example.canteen.entity.Department;

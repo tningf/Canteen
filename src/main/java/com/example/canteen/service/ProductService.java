@@ -1,8 +1,8 @@
 package com.example.canteen.service;
 
-import com.example.canteen.dto.ImageDto;
-import com.example.canteen.dto.ProductDto;
-import com.example.canteen.dto.StockDto;
+import com.example.canteen.dto.dtos.ImageDto;
+import com.example.canteen.dto.dtos.ProductDto;
+import com.example.canteen.dto.dtos.StockDto;
 import com.example.canteen.dto.request.AddProductRequest;
 import com.example.canteen.dto.request.ProductUpdateRequest;
 import com.example.canteen.entity.Category;

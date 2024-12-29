@@ -1,7 +1,7 @@
 package com.example.canteen.controller;
 
 import com.example.canteen.constant.PaginationConstants;
-import com.example.canteen.dto.UserDto;
+import com.example.canteen.dto.dtos.UserDto;
 import com.example.canteen.dto.request.CreateUserRequest;
 import com.example.canteen.dto.request.UserUpdateRequest;
 import com.example.canteen.dto.response.ApiResponse;

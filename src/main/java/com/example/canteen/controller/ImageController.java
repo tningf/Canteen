@@ -1,7 +1,7 @@
 package com.example.canteen.controller;
 
 
-import com.example.canteen.dto.ImageDto;
+import com.example.canteen.dto.dtos.ImageDto;
 import com.example.canteen.dto.response.ApiResponse;
 import com.example.canteen.entity.Image;
 import com.example.canteen.enums.ErrorCode;

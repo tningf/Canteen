@@ -1,6 +1,6 @@
 package com.example.canteen.controller;
 
-import com.example.canteen.dto.PatientBalanceDto;
+import com.example.canteen.dto.dtos.PatientBalanceDto;
 import com.example.canteen.dto.request.PatientTopUpBalanceRequest;
 import com.example.canteen.dto.response.ApiResponse;
 import com.example.canteen.service.PatientBalanceService;

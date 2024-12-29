@@ -1,6 +1,6 @@
 package com.example.canteen.service;
 
-import com.example.canteen.dto.StockDto;
+import com.example.canteen.dto.dtos.StockDto;
 import com.example.canteen.entity.Product;
 import com.example.canteen.entity.Stock;
 import com.example.canteen.exception.AppException;

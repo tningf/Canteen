@@ -1,6 +1,6 @@
 package com.example.canteen.controller;
 
-import com.example.canteen.dto.OrderDto;
+import com.example.canteen.dto.dtos.OrderDto;
 import com.example.canteen.dto.response.ApiResponse;
 import com.example.canteen.dto.response.PageResponse;
 import com.example.canteen.entity.Order;

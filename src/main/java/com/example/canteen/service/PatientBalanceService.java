@@ -1,6 +1,6 @@
 package com.example.canteen.service;
 
-import com.example.canteen.dto.PatientBalanceDto;
+import com.example.canteen.dto.dtos.PatientBalanceDto;
 import com.example.canteen.entity.Patient;
 import com.example.canteen.entity.PatientBalance;
 import com.example.canteen.entity.TransactionHistory;

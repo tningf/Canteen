@@ -1,6 +1,6 @@
 package com.example.canteen.mapper;
 
-import com.example.canteen.dto.CartDto;
+import com.example.canteen.dto.dtos.CartDto;
 import com.example.canteen.entity.Cart;
 import org.mapstruct.Mapper;
 

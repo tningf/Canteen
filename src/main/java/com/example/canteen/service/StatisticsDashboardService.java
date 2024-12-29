@@ -1,7 +1,7 @@
 package com.example.canteen.service;
 
-import com.example.canteen.dto.OrderStatistics;
-import com.example.canteen.dto.TopSellingProduct;
+import com.example.canteen.dto.statistics.OrderStatistics;
+import com.example.canteen.dto.statistics.TopSellingProduct;
 import com.example.canteen.entity.Order;
 import com.example.canteen.entity.OrderItem;
 import com.example.canteen.enums.ErrorCode;

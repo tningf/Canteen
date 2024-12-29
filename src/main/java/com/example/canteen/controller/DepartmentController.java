@@ -1,7 +1,7 @@
 package com.example.canteen.controller;
 
 
-import com.example.canteen.dto.DepartmentDto;
+import com.example.canteen.dto.dtos.DepartmentDto;
 import com.example.canteen.dto.response.ApiResponse;
 import com.example.canteen.enums.ErrorCode;
 import com.example.canteen.service.DepartmentService;

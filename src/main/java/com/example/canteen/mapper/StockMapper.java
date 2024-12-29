@@ -1,6 +1,6 @@
 package com.example.canteen.mapper;
 
-import com.example.canteen.dto.StockDto;
+import com.example.canteen.dto.dtos.StockDto;
 import com.example.canteen.entity.Stock;
 import org.mapstruct.Mapper;
 
