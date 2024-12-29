@@ -9,6 +9,8 @@ import com.example.canteen.mapper.OrderMapper;
 import com.example.canteen.repository.OrderRepository;
 import com.example.canteen.repository.StockRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -189,5 +191,15 @@ public class OrderService {
         Patient patient = order.getPatient();
         BigDecimal newBalance = patient.getPatientBalance().getBalance().subtract(order.getTotalAmount());
         patient.getPatientBalance().setBalance(newBalance);
+    }
+
+    public Page<OrderDto> getAllOrdersPaginated(Pageable pageable) {
+        Page<Order> orderPage = orderRepository.findAll(pageable);
+        return orderPage.map(orderMapper::convertToDto);
+    }
+
+    public Page<OrderDto> getAllOrdersByStatus(OrderStatus status, Pageable pageable) {
+        return orderRepository.findAllByStatusWithDetails(status, pageable)
+                .map(orderMapper::convertToDto);
     }
 }

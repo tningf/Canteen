@@ -16,6 +16,8 @@ import com.example.canteen.enums.ErrorCode;
 import com.example.canteen.service.ImageService;
 import com.example.canteen.service.ProductService;
 import com.example.canteen.service.StockService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +33,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/products")
+@Tag(name = "Product", description = "APIs for managing products in the canteen system")
 public class ProductController {
     private final ProductService productService;
     private final ImageService imageService;
@@ -38,6 +41,7 @@ public class ProductController {
 
     // GET
     // Xem tất cả sản phẩm
+    @Operation(summary = "Get all products", description = "Retrieve all active products with pagination and sorting")
     @GetMapping
     public ResponseEntity<ApiResponse> getAllProducts(
             @RequestParam(defaultValue = PaginationConstants.DEFAULT_PAGE_NUMBER) int page,
@@ -61,6 +65,7 @@ public class ProductController {
     }
 
     // Xem sản phẩm theo ID
+    @Operation(summary = "Get product by ID", description = "Retrieve a product by its unique ID")
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse> getProductById(@PathVariable Long id) {
         Product product = productService.getProductById(id);
@@ -71,6 +76,7 @@ public class ProductController {
                 .build());
     }
     // Xem sản phẩm theo category
+    @Operation(summary = "Get products by category", description = "Retrieve products by category with pagination")
     @GetMapping("/category/{category}/all")
     public ResponseEntity<ApiResponse> getProductByCategory(
             @PathVariable String category,
@@ -95,6 +101,7 @@ public class ProductController {
     }
     // POST
     // Tạo mới sản phẩm
+    @Operation(summary = "Create a new product", description = "Add a new product with images and initial stock")
     @PreAuthorize("hasAnyRole('KETOAN', 'ADMIN')")
     @PostMapping
     public ResponseEntity<ApiResponse> createProduct(@ModelAttribute AddProductRequest product) {
@@ -128,6 +135,7 @@ public class ProductController {
 
     // PUT
     // Cập nhật sản phẩm theo ID
+    @Operation(summary = "Update a product", description = "Update an existing product and its stock or images")
     @PreAuthorize("hasAnyRole('KETOAN', 'ADMIN')")
     @PutMapping("/{productId}")
     public ResponseEntity<ApiResponse> updateProduct(@ModelAttribute ProductUpdateRequest request, @PathVariable Long productId) {
@@ -159,6 +167,7 @@ public class ProductController {
     }
     // DELETE
     // Xóa mềm sản phẩm
+    @Operation(summary = "Delete a product", description = "Soft delete a product by its ID")
     @PreAuthorize("hasAnyRole('KETOAN', 'ADMIN')")
     @DeleteMapping("/{productId}")
     public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Long productId) {

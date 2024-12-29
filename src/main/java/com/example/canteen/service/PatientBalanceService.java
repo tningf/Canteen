@@ -36,6 +36,14 @@ public class PatientBalanceService {
         return new PatientBalanceDto(patientBalance.getId(), patientBalance.getBalance());
     }
 
+    //Get patient balance by id
+    public PatientBalanceDto getBalanceById(Long patientId) {
+        Patient patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new AppException(ErrorCode.PATIENT_NOT_FOUND));
+        PatientBalance patientBalance = patient.getPatientBalance();
+        return new PatientBalanceDto(patientBalance.getId(), patientBalance.getBalance());
+    }
+
     //Add patient balance
     public PatientBalanceDto addBalance(Long patientId) {
         Patient patient = patientRepository.findById(patientId)

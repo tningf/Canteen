@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 @Data
 @Builder
-public class SaleItemStatisticsDto {
+public class SaleProductStatistics {
     private int sequenceNumber;
     private String productName;
     private String categoryName;
@@ -15,5 +15,4 @@ public class SaleItemStatisticsDto {
     private BigDecimal unitPrice;
     private int quantity;
     private BigDecimal totalPrice;
-    private String note;
 }

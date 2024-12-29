@@ -24,6 +24,15 @@ public class PatientBalanceController {
                 .build());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse> getBalanceById(@PathVariable Long id) {
+        PatientBalanceDto patientBalance = patientBalanceService.getBalanceById(id);
+        return ResponseEntity.ok(ApiResponse.builder()
+                .message("Lấy dữ liệu thành công")
+                .data(patientBalance)
+                .build());
+    }
+
     @PreAuthorize("hasAnyRole('KETOAN', 'ADMIN', 'NHANVIENBANHANG', 'NHANVIENKHOA')")
     @PutMapping("/{id}/top-up")
     public ResponseEntity<ApiResponse> topUpBalance(@RequestBody PatientTopUpBalanceRequest request,@PathVariable Long id) {

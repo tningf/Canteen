@@ -1,10 +1,11 @@
 package com.example.canteen.controller;
 
-import com.example.canteen.dto.OrderStatisticsDto;
-import com.example.canteen.dto.SaleItemStatisticsDto;
+import com.example.canteen.dto.OrderStatistics;
+import com.example.canteen.dto.SaleProductStatistics;
 import com.example.canteen.dto.response.ApiResponse;
 import com.example.canteen.exception.AppException;
-import com.example.canteen.service.StatisticsService;
+import com.example.canteen.service.StatisticsDashboardService;
+import com.example.canteen.service.StatisticsProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -25,7 +26,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class StatisticsController {
-    private final StatisticsService statisticsService;
+    private final StatisticsDashboardService statisticsDashboardService;
+    private final StatisticsProductService statisticsProductService;
 
     @GetMapping("/dashboard")
     public ResponseEntity<ApiResponse> getOrderStatistics(
@@ -35,14 +37,14 @@ public class StatisticsController {
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) String endDate) {
 
         try {
-            OrderStatisticsDto statistics;
+            OrderStatistics statistics;
 
             if (startDate == null || endDate == null) {
-                statistics = statisticsService.getDefaultStatistics();
+                statistics = statisticsDashboardService.getDefaultStatistics();
             } else {
                 LocalDateTime startDateTime = LocalDate.parse(startDate).atStartOfDay();
                 LocalDateTime endDateTime = LocalDate.parse(endDate).atTime(LocalTime.now());
-                statistics = statisticsService.getOrderStatistics(startDateTime, endDateTime);
+                statistics = statisticsDashboardService.getOrderStatistics(startDateTime, endDateTime);
             }
 
             return ResponseEntity.ok(ApiResponse.builder()
@@ -60,17 +62,19 @@ public class StatisticsController {
             log.error("Unexpected error getting order statistics", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.builder()
-                            .message("Có lỗi xảy ra khi lấy thống kê")
+                            .message("Có lỗi xảy ra khi lấy thống kê!")
                             .build());
         }
     }
-    @GetMapping("/detailed")
-    public ResponseEntity<ApiResponse> getDetailedStatistics() {
-        List<SaleItemStatisticsDto> detailedStats = statisticsService.generateDetailedSalesStatistics();
+    @GetMapping("/sale-product")
+    public ResponseEntity<ApiResponse> getSaleStatistics(
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            @RequestParam(required = false) String categoryName) {
+        List<SaleProductStatistics> saleStats = statisticsProductService.generateSaleProductStatistics(startDate, endDate, categoryName);
         return ResponseEntity.ok(ApiResponse.builder()
-                .message("Lấy thống kê chi tiết thành công")
-                .data(detailedStats)
+                .message("Lấy thống kê bán hàng thành công")
+                .data(saleStats)
                 .build());
     }
-
 }

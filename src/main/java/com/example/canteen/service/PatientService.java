@@ -12,6 +12,8 @@ import com.example.canteen.repository.DepartmentRepository;
 import com.example.canteen.repository.PatientRepository;
 import com.example.canteen.security.jwt.JwtUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -136,5 +138,9 @@ public class PatientService {
 
     public List<PatientDto> covertToDto(List<Patient> patients) {
         return patients.stream().map(patientMapper::covertToDto).collect(Collectors.toList());
+    }
+
+    public Page<Patient> getAllPatientsPaginated(Pageable pageable) {
+        return patientRepository.findAll(pageable);
     }
 }

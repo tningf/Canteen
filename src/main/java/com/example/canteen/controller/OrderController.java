@@ -2,10 +2,16 @@ package com.example.canteen.controller;
 
 import com.example.canteen.dto.OrderDto;
 import com.example.canteen.dto.response.ApiResponse;
+import com.example.canteen.dto.response.PageResponse;
 import com.example.canteen.entity.Order;
+import com.example.canteen.enums.OrderStatus;
 import com.example.canteen.mapper.OrderMapper;
 import com.example.canteen.service.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,17 +26,35 @@ public class OrderController {
     private final OrderMapper orderMapper;
 
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse> getAllOrders() {
+    public ResponseEntity<ApiResponse> getAllOrders(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "orderDate") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDirection,
+            @RequestParam(required = false) OrderStatus status) {
         try {
-            List<OrderDto> orders = orderService.getAllOrders();
+            Sort.Direction direction = sortDirection.equalsIgnoreCase("desc") ?
+                    Sort.Direction.DESC : Sort.Direction.ASC;
+            Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+
+            Page<OrderDto> orderPage;
+            if (status != null) {
+                orderPage = orderService.getAllOrdersByStatus(status, pageable);
+            } else {
+                orderPage = orderService.getAllOrdersPaginated(pageable);
+            }
+
+            PageResponse<OrderDto> pageResponse = PageResponse.of(orderPage);
+
             return ResponseEntity.ok(ApiResponse.builder()
                     .message("Lấy tất cả đơn hàng thành công!")
-                    .data(orders)
+                    .data(pageResponse)
                     .build());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.builder()
-                    .message("Oops!" + e.getMessage())
-                    .build());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.builder()
+                            .message("Oops! " + e.getMessage())
+                            .build());
         }
     }
 

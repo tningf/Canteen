@@ -15,6 +15,8 @@ import com.example.canteen.repository.UserRepository;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
@@ -161,4 +163,11 @@ public class UserService {
         return userRepository.existsByUsernameAndStatusTrue(username);
     }
 
+    public Page<User> getAllUsersPaginated(Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
+
+    public boolean isUserExists(@NotBlank String username) {
+        return userRepository.existsByUsername(username);
+    }
 }

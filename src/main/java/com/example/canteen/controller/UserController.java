@@ -1,13 +1,19 @@
 package com.example.canteen.controller;
 
+import com.example.canteen.constant.PaginationConstants;
 import com.example.canteen.dto.UserDto;
 import com.example.canteen.dto.request.CreateUserRequest;
 import com.example.canteen.dto.request.UserUpdateRequest;
 import com.example.canteen.dto.response.ApiResponse;
+import com.example.canteen.dto.response.PageResponse;
 import com.example.canteen.entity.User;
 import com.example.canteen.mapper.UserMapper;
 import com.example.canteen.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,12 +27,24 @@ public class UserController {
     private final UserMapper userMapper;
 
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse> getAllUsers() {
-        List<User> user = userService.getAllUsers();
-        List<UserDto> userDto = userService.getConvertUsers(user);
+    public ResponseEntity<ApiResponse> getAllUsers(
+            @RequestParam(defaultValue = PaginationConstants.DEFAULT_PAGE_NUMBER) int page,
+            @RequestParam(defaultValue = PaginationConstants.DEFAULT_PAGE_SIZE) int size,
+            @RequestParam(defaultValue = PaginationConstants.DEFAULT_SORT_BY) String sortBy,
+            @RequestParam(defaultValue = PaginationConstants.DEFAULT_SORT_DIRECTION) String sortDirection) {
+
+        Sort.Direction direction = sortDirection.equalsIgnoreCase("desc") ?
+                Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+
+        Page<User> user = userService.getAllUsersPaginated(pageable);
+        List<UserDto> userDto = userService.getConvertUsers(user.getContent());
+
+        PageResponse<UserDto> pageResponse = PageResponse.of(userDto, user);
+
         return ResponseEntity.ok(ApiResponse.builder()
                 .message("Get all users successfully!")
-                .data(userDto)
+                .data(pageResponse)
                 .build());
     }
 
