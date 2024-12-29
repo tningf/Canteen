@@ -67,8 +67,11 @@ public class CartItemService {
 
     @Transactional
     public void updateItemQuantity(Long cartId, Long cartItemId, int quantity) {
+        log.info("Starting to update quantity for cartId: {}, cartItemId: {}, new quantity: {}",
+                cartId, cartItemId, quantity);
         Cart cart = cartService.getCart(cartId);
         if (cart == null) {
+            log.error("Cart not found with id: {}", cartId);
             throw new AppException(ErrorCode.CART_NOT_FOUND);
         }
 
@@ -77,11 +80,14 @@ public class CartItemService {
                 .filter(item -> item.getId().equals(cartItemId))
                 .findFirst()
                 .orElseThrow(() -> {
+                    log.error("Cart item not found with id: {} in cart: {}", cartItemId, cartId);
                     return new AppException(ErrorCode.CART_ITEM_NOT_FOUND);
                 });
 
         Stock stock = cartItem.getProduct().getStock();
         if (stock.getQuantity() < quantity) {
+            log.warn("Insufficient stock for product: {}. Requested: {}, Available: {}",
+                    cartItem.getProduct().getId(), quantity, stock.getQuantity());
             throw new AppException(ErrorCode.INSUFFICIENT_STOCK);
         }
 
