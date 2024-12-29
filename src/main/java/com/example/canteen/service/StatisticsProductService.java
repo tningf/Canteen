@@ -23,6 +23,7 @@ public class StatisticsProductService {
     public List<SaleProductStatistics> generateSaleProductStatistics(LocalDate startDate, LocalDate endDate, String categoryName) {
         List<Order> orders = filterOrdersByDate(orderRepository.findByOrderStatus(OrderStatus.CONFIRMED), startDate, endDate);
 
+        AtomicInteger counter = new AtomicInteger(1);
         Map<String, SaleProductStatistics.SaleProductStatisticsBuilder> salesByProduct = new HashMap<>();
         orders.stream()
                 .flatMap(order -> order.getOrderItems().stream())
@@ -30,6 +31,7 @@ public class StatisticsProductService {
                 .forEach(orderItem -> {
                     String productKey = orderItem.getProduct().getId().toString();
                     salesByProduct.computeIfAbsent(productKey, k -> SaleProductStatistics.builder()
+                                    .sequenceNumber(counter.getAndIncrement())
                             .productName(orderItem.getProduct().getName())
                             .categoryName(orderItem.getProduct().getCategory().getName())
                             .unit(orderItem.getProduct().getUnit())
@@ -43,7 +45,8 @@ public class StatisticsProductService {
 
         return salesByProduct.values().stream()
                 .map(SaleProductStatistics.SaleProductStatisticsBuilder::build)
-                .sorted(Comparator.comparing(SaleProductStatistics::getProductName))
+                .sorted(Comparator.comparing(SaleProductStatistics::getSequenceNumber)
+                        .thenComparing(SaleProductStatistics::getProductName))
                 .collect(Collectors.toList());
     }
 
@@ -64,8 +67,7 @@ public class StatisticsProductService {
                         user.getDepartments().stream().map(Department::getDepartmentName).collect(Collectors.joining(", ")) : "";
             });
 
-            order.getOrderItems().forEach(orderItem ->
-                    statistics.add(StaffSaleStatistics.builder()
+            order.getOrderItems().forEach(orderItem -> statistics.add(StaffSaleStatistics.builder()
                     .sequenceNumber(counter.getAndIncrement())
                     .patientId(String.valueOf(order.getPatient().getId()))
                     .cardNumber(order.getPatient().getCardNumber())
