@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -31,7 +30,7 @@ public class StockController {
     public ResponseEntity<ApiResponse> getAllStocks() {
         List<StockDto> stocks = stockService.getAllStock().stream()
                 .map(stockMapper::toStockDto)
-                .collect(Collectors.toList());
+                .toList();
         return ResponseEntity.ok(ApiResponse.builder().data(stocks).build());
     }
 
