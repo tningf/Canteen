@@ -78,20 +78,20 @@ public class PatientBalanceService {
 
     // Withdraw patient balance
     public PatientBalanceDto withdrawBalance(Long patientId, BigDecimal balance) {
-    Patient patient = patientRepository.findById(patientId)
-            .orElseThrow(() -> new AppException(ErrorCode.PATIENT_NOT_FOUND));
-    PatientBalance patientBalance = patient.getPatientBalance();
-    BigDecimal newBalance = patientBalance.getBalance().subtract(balance);
-    if (newBalance.compareTo(BigDecimal.ZERO) < 0) {
-        throw new AppException(ErrorCode.INSUFFICIENT_BALANCE);
-    }
-    patientBalance.setBalance(newBalance);
-    patientBalance.setUpdateDate(LocalDateTime.now());
-    patientBalance.setUpdateBy(getName());
-    patientBalanceRepository.save(patientBalance);
+        Patient patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new AppException(ErrorCode.PATIENT_NOT_FOUND));
+        PatientBalance patientBalance = patient.getPatientBalance();
+        BigDecimal newBalance = patientBalance.getBalance().subtract(balance);
+        if (newBalance.compareTo(BigDecimal.ZERO) < 0) {
+            throw new AppException(ErrorCode.INSUFFICIENT_BALANCE);
+        }
+        patientBalance.setBalance(newBalance);
+        patientBalance.setUpdateDate(LocalDateTime.now());
+        patientBalance.setUpdateBy(getName());
+        patientBalanceRepository.save(patientBalance);
 
-    saveTransactionHistory(patient, "WITHDRAW", balance, "Withdraw balance");
-    return new PatientBalanceDto(patientBalance.getId(), patientBalance.getBalance());
+        saveTransactionHistory(patient, "WITHDRAW", balance, "Withdraw balance");
+        return new PatientBalanceDto(patientBalance.getId(), patientBalance.getBalance());
     }
     public String getName() {
         var context = SecurityContextHolder.getContext();
@@ -108,6 +108,4 @@ public class PatientBalanceService {
 
         transactionHistoryRepository.save(transactionHistory);
     }
-
-
 }

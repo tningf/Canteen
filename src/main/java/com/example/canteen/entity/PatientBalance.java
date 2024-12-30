@@ -21,7 +21,7 @@ public class PatientBalance {
     @Column(name = "PatientBalance_ID")
     private Long id;
 
-    @Column(name = "PatinetBalance")
+    @Column(name = "PatientBalance")
     private BigDecimal balance;
 
     @Column(name = "CREATE_DATE")
