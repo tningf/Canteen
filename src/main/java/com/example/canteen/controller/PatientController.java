@@ -97,7 +97,8 @@ public class PatientController {
             return ResponseEntity.ok(ApiResponse.builder()
                     .message("Xóa tài khoản thành công!")
                     .build());
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.builder()
                     .message("Xóa tài khoản thất bại!:" + e.getMessage())
                     .build());

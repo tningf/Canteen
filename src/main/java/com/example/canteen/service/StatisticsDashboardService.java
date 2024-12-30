@@ -33,7 +33,7 @@ public class StatisticsDashboardService {
                 startDate,
                 endDate
         );
-
+        log.info("Start date: {}, End date: {}", startDate, endDate);
         return generateOrderStatistics(ordersInRange);
     }
 
@@ -55,9 +55,9 @@ public class StatisticsDashboardService {
         if (startDate.isAfter(endDate)) {
             throw new AppException(ErrorCode.INVALID_DATE_RANGE);
         }
-        if (endDate.isAfter(LocalDateTime.now())) {
-            throw new AppException(ErrorCode.FUTURE_DATE_NOT_ALLOWED);
-        }
+//        if (endDate.isAfter(LocalDateTime.now())) {
+//            throw new AppException(ErrorCode.FUTURE_DATE_NOT_ALLOWED);
+//        }
     }
 
     /**
@@ -80,7 +80,7 @@ public class StatisticsDashboardService {
                 .map(Order::getTotalAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        // Calculate top selling products
+        // Calculate top-selling products
         List<TopSellingProduct> topSellingProducts = orders.stream()
                 .flatMap(order -> order.getOrderItems().stream())
                 .collect(Collectors.groupingBy(
@@ -107,7 +107,7 @@ public class StatisticsDashboardService {
                         .comparing(TopSellingProduct::getRevenue, Comparator.reverseOrder())
                         .thenComparing(TopSellingProduct::getQuantitySold, Comparator.reverseOrder()))
                 .limit(DEFAULT_TOP_PRODUCTS_LIMIT)
-                .collect(Collectors.toList());
+                .toList();
 
         return OrderStatistics.builder()
                 .totalOrders(totalOrders)

@@ -2,7 +2,7 @@ package com.example.canteen.dto.request;
 
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.util.Collection;
 
 @Data
 public class CreateUserRequest {
@@ -10,5 +10,5 @@ public class CreateUserRequest {
     private String password;
     private String fullName;
     private String roles;
-    private String departments;
+    private Collection<String> departments;
 }

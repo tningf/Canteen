@@ -43,12 +43,7 @@ public class PatientService {
             throw new AppException(ErrorCode.USER_ALREADY_EXISTS);
         }
 
-        Department department = departmentRepository.findByDepartmentName(request.getDepartments());
-        if (department == null) {
-            department = new Department();
-            department.setDepartmentName(request.getDepartments());
-            department = departmentRepository.save(department);
-        }
+
 
         Patient patient = new Patient();
         patient.setCardNumber(request.getCardNumber());
@@ -59,7 +54,12 @@ public class PatientService {
         patient.setRoom(request.getRoom());
         patient.setCreateDate(LocalDateTime.now());
 
-        patient.getDepartments().add(department);
+        if (request.getDepartments() != null && !request.getDepartments().isEmpty()) {
+            Collection<Department> departments = request.getDepartments().stream()
+                    .map(this::getOrCreateDepartment)
+                    .collect(Collectors.toSet());
+            patient.setDepartments(departments);
+        }
 
         return patientRepository.save(patient);
     }
@@ -137,7 +137,7 @@ public class PatientService {
     }
 
     public List<PatientDto> covertToDto(List<Patient> patients) {
-        return patients.stream().map(patientMapper::covertToDto).collect(Collectors.toList());
+        return patients.stream().map(patientMapper::covertToDto).toList();
     }
 
     public Page<Patient> getAllPatientsPaginated(Pageable pageable) {

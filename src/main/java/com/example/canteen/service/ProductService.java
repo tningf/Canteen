@@ -44,7 +44,7 @@ public class ProductService {
         // If No, save it as a new category
         // The set as the new product category
 
-        if (checkProductExist(request.getName())){
+        if (Boolean.TRUE.equals(checkProductExist(request.getName()))){
             throw new AppException(ErrorCode.PRODUCT_ALREADY_EXISTS);
         }
 

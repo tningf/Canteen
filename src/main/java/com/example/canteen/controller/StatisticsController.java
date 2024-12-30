@@ -44,7 +44,8 @@ public class StatisticsController {
                 statistics = statisticsDashboardService.getDefaultStatistics();
             } else {
                 LocalDateTime startDateTime = LocalDate.parse(startDate).atStartOfDay();
-                LocalDateTime endDateTime = LocalDate.parse(endDate).atTime(LocalTime.now());
+                LocalDateTime endDateTime = LocalDate.parse(endDate).atTime(LocalTime.MAX);
+                log.info("Start date: {}, End date: {}", startDateTime, endDateTime);
                 statistics = statisticsDashboardService.getOrderStatistics(startDateTime, endDateTime);
             }
 

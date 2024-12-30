@@ -35,5 +35,8 @@ public class TransactionHistory {
     private LocalDateTime transactionDate;
 
     @Column(name = "Remarks", columnDefinition = "NVARCHAR(255)")
-    private String remarks; // Optional comments or descriptions
+    private String remarks;
+
+    @Column(name = "CREATE_BY")
+    private String createBy;
 }

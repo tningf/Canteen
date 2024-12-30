@@ -22,8 +22,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -44,12 +46,6 @@ public class UserService {
        if (userRepository.existsByUsername(request.getUsername())) {
            throw new AppException(ErrorCode.USER_ALREADY_EXISTS);
        }
-        Department department = departmentRepository.findByDepartmentName(request.getDepartments());
-        if (department == null) {
-            department = new Department();
-            department.setDepartmentName(request.getDepartments());
-            department = departmentRepository.save(department);
-        }
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -57,7 +53,10 @@ public class UserService {
         user.setCreateDate(LocalDateTime.now());
         user.setStatus(true);
         user.setRoles(roleRepository.findAllByName(RoleName.valueOf(request.getRoles())));
-        user.getDepartments().add(department);
+        if (request.getDepartments() != null && !request.getDepartments().isEmpty()) {
+            Collection<Department> departments = addDepartmentsByName(request.getDepartments());
+            user.setDepartments(departments);
+        }
         return userRepository.save(user);
     }
 
@@ -82,45 +81,84 @@ public class UserService {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_KETOAN')")
     @Transactional
     public UserDto updateUser(Long id, UserUpdateRequest request) {
-    if (request == null || id == null) {
-        throw new AppException(ErrorCode.INVALID_REQUEST);
+        // 1. Input validation
+        validateInput(id, request);
+
+        // 2. Get current user's admin status
+        boolean isAdmin = SecurityUtils.isCurrentUserAdmin();
+
+        // 3. Update user
+        return userRepository.findById(id)
+                .map(user -> updateUserDetails(user, request, isAdmin))
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
     }
 
-    var authentication = SecurityContextHolder.getContext().getAuthentication();
-    boolean isAdmin = authentication.getAuthorities().stream()
-            .map(GrantedAuthority::getAuthority)
-            .anyMatch(role -> role.equals("ROLE_ADMIN"));
+    // Separate input validation
+    private void validateInput(Long id, UserUpdateRequest request) {
+        if (request == null || id == null) {
+            throw new AppException(ErrorCode.INVALID_REQUEST);
+        }
+    }
 
-    return userRepository.findById(id).map(user -> {
+    @Component
+    public class SecurityUtils {
+        public static boolean isCurrentUserAdmin() {
+            return SecurityContextHolder.getContext()
+                    .getAuthentication()
+                    .getAuthorities()
+                    .stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .anyMatch(role -> role.equals("ROLE_ADMIN"));
+        }
+    }
+
+    // Main update logic
+    private UserDto updateUserDetails(User user, UserUpdateRequest request, boolean isAdmin) {
+        // Check permissions for non-admin users
         if (!isAdmin) {
-            boolean isTargetAdminOrKetoan = user.getRoles().stream()
-                    .map(role -> role.getName().name())
-                    .anyMatch(role -> role.equals("ROLE_ADMIN") || role.equals("ROLE_KETOAN"));
-            if (isTargetAdminOrKetoan) {
-                throw new AppException(ErrorCode.UNAUTHORIZED_ROLE_MODIFICATION);
-            }
+            checkPermissions(user);
         }
 
+        // Update basic info
         user.setFullName(request.getFullName());
         user.setStatus(true);
+        user.setUpdateDate(LocalDateTime.now());
 
-        if (request.getDepartments() != null && !request.getDepartments().isEmpty()) {
-            Collection<Department> departments = addDepartmentsByName(request.getDepartments());
+        // Update departments if provided
+        updateDepartments(user, (List<String>) request.getDepartments());
+
+        // Update roles if provided
+        updateRoles(user, request.getRoles(), isAdmin);
+
+        return userMapper.toUserResponse(userRepository.save(user));
+    }
+
+    private void checkPermissions(User user) {
+        boolean isTargetAdminOrKetoan = user.getRoles().stream()
+                .map(role -> role.getName().name())
+                .anyMatch(role -> role.equals("ROLE_ADMIN") || role.equals("ROLE_KETOAN"));
+
+        if (isTargetAdminOrKetoan) {
+            throw new AppException(ErrorCode.UNAUTHORIZED_ROLE_MODIFICATION);
+        }
+    }
+
+    private void updateDepartments(User user, List<String> departmentNames) {
+        if (departmentNames != null && !departmentNames.isEmpty()) {
+            Collection<Department> departments = addDepartmentsByName(departmentNames);
             user.setDepartments(departments);
         }
+    }
 
-        if (request.getRoles() != null && !request.getRoles().trim().isEmpty()) {
-            RoleName newRole = validateAndGetRole(request.getRoles());
+    private void updateRoles(User user, String roles, boolean isAdmin) {
+        if (StringUtils.hasText(roles)) {
+            RoleName newRole = validateAndGetRole(roles);
             if (!isAdmin && newRole == RoleName.ROLE_ADMIN) {
                 throw new AppException(ErrorCode.UNAUTHORIZED_ROLE_MODIFICATION);
             }
             user.setRoles(roleRepository.findAllByName(newRole));
         }
-
-        user.setUpdateDate(LocalDateTime.now());
-        return userMapper.toUserResponse(userRepository.save(user));
-    }).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-}
+    }
     private Collection<Department> addDepartmentsByName(Collection<String> departmentNames) {
         return departmentNames.stream()
                 .map(this::getOrCreateDepartment)
@@ -148,7 +186,7 @@ public class UserService {
     }
 
     public List<UserDto> getConvertUsers(List<User> user) {
-        return user.stream().map(userMapper::toUserResponse).collect(Collectors.toList());
+        return user.stream().map(userMapper::toUserResponse).toList();
     }
 
     public void deleteUser(Long id) {

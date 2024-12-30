@@ -22,6 +22,7 @@ public class PatientBalanceService {
     private final PatientRepository patientRepository;
     private final PatientBalanceRepository patientBalanceRepository;
     private final TransactionHistoryRepository transactionHistoryRepository;
+    private final UserContextService userContextService;
 
     //Get patient balance
     public PatientBalanceDto getBalance() {
@@ -52,7 +53,7 @@ public class PatientBalanceService {
         patientBalance.setBalance(BigDecimal.ZERO);
         patientBalance.setPatient(patient);
         patientBalance.setCreateDate(LocalDateTime.now());
-        patientBalance.setCreateBy(getName());
+        patientBalance.setCreateBy(getCurrentUser());
         patientBalanceRepository.save(patientBalance);
         return new PatientBalanceDto(patientBalance.getId(),patientBalance.getBalance());
     }
@@ -60,6 +61,7 @@ public class PatientBalanceService {
 
     // Top up patient balance
     public PatientBalanceDto topUpBalance(Long patientId, BigDecimal balance) {
+
         Patient patient = patientRepository.findById(patientId)
                 .orElseThrow(() -> new AppException(ErrorCode.PATIENT_NOT_FOUND));
         PatientBalance patientBalance = patient.getPatientBalance();
@@ -68,7 +70,7 @@ public class PatientBalanceService {
         patientBalance.setUpdateDate(LocalDateTime.now());
 
         // Set Update By
-        patientBalance.setUpdateBy(getName());
+        patientBalance.setUpdateBy(getCurrentUser());
 
         patientBalanceRepository.save(patientBalance);
 
@@ -87,15 +89,14 @@ public class PatientBalanceService {
         }
         patientBalance.setBalance(newBalance);
         patientBalance.setUpdateDate(LocalDateTime.now());
-        patientBalance.setUpdateBy(getName());
+        patientBalance.setUpdateBy(getCurrentUser());
         patientBalanceRepository.save(patientBalance);
 
         saveTransactionHistory(patient, "WITHDRAW", balance, "Withdraw balance");
         return new PatientBalanceDto(patientBalance.getId(), patientBalance.getBalance());
     }
-    public String getName() {
-        var context = SecurityContextHolder.getContext();
-        return context.getAuthentication().getName();
+    public String getCurrentUser() {
+        return userContextService.getCurrentUser();
     }
 
     private void saveTransactionHistory(Patient patient, String transactionType, BigDecimal amount, String remarks) {
@@ -105,7 +106,7 @@ public class PatientBalanceService {
         transactionHistory.setTransactionAmount(amount);
         transactionHistory.setTransactionDate(LocalDateTime.now());
         transactionHistory.setRemarks(remarks);
-
+        transactionHistory.setCreateBy(getCurrentUser());
         transactionHistoryRepository.save(transactionHistory);
     }
 }
