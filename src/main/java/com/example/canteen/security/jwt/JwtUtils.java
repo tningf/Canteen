@@ -30,7 +30,6 @@ public class JwtUtils {
     @Value("${auth.token.expirationInMils}")
     private int expirationTime;
 
-    @Cacheable(value = "jwtSecrets", key = "#authentication.name")
     public String generateTokenForUser(Authentication authentication) {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         SecretKey key = getSecretKey();
