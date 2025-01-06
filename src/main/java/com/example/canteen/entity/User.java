@@ -24,10 +24,10 @@ public class User {
     @Column(name = "User_ID")
     private Long id;
 
-    @Column(name = "Username", unique = true)
+    @Column(name = "username", unique = true)
     private String username;
 
-    @Column(name = "Password")
+    @Column(name = "password")
     private String password;
 
     @Column(name = "FullName",columnDefinition = "NVARCHAR(255)")

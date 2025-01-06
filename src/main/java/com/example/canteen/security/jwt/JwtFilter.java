@@ -2,7 +2,6 @@ package com.example.canteen.security.jwt;
 
 import com.example.canteen.security.patient.PatientDetailsService;
 import com.example.canteen.security.user.MyUserDetailService;
-import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

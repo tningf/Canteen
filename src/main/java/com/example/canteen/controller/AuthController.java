@@ -2,7 +2,6 @@ package com.example.canteen.controller;
 
 import com.example.canteen.dto.request.LoginRequest;
 import com.example.canteen.security.jwt.JwtUtils;
-import com.example.canteen.security.user.UserPrincipal;
 import com.example.canteen.service.PatientService;
 import com.example.canteen.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,12 +35,15 @@ public class AuthController {
     @PostMapping("/login/user")
     public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody LoginRequest request, HttpServletRequest httpRequest) {
         try {
+            long startTime = System.currentTimeMillis();
             Authentication authentication = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(
                             request.getUsername(), request.getPassword()));
-
+            log.info("1. Authentication time: {} ms", System.currentTimeMillis() - startTime);
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            log.info("2. Authentication time: {} ms", System.currentTimeMillis() - startTime);
             String jwt = jwtUtils.generateTokenForUser(authentication);
+            log.info("3. Authentication time: {} ms", System.currentTimeMillis() - startTime);
 
 //            updateLastLogin(httpRequest, userDetails.getId());
 

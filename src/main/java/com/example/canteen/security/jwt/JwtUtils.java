@@ -32,7 +32,6 @@ public class JwtUtils {
 
     public String generateTokenForUser(Authentication authentication) {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-        SecretKey key = getSecretKey();
         List<String> roles = userPrincipal.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
@@ -43,7 +42,7 @@ public class JwtUtils {
                 .claim("roles", roles)
                 .issuedAt(new Date())
                 .expiration(new Date((new Date()).getTime() + expirationTime))
-                .signWith(key)
+                .signWith(getSecretKey())
                 .compact();
     }
 
