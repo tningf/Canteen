@@ -16,7 +16,7 @@ public enum ErrorCode {
     UNAUTHENTICATED("Bạn chưa xác thực!", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED("Bạn không có quyền truy cập!", HttpStatus.FORBIDDEN),
     UNAUTHORIZED_ROLE_MODIFICATION("Bạn không có đủ quyền!", HttpStatus.FORBIDDEN),
-
+    
     PRODUCT_NOT_FOUND("Sản phẩm không tồn tại!", HttpStatus.NOT_FOUND),
     PRODUCT_ALREADY_EXISTS("Sản phẩm đã tồn tại!", HttpStatus.CONFLICT),
 
@@ -40,6 +40,7 @@ public enum ErrorCode {
     INVALID_STATUS_TRANSITION_CANCELED_TO_CANCELED("Đơn hàng đã ở trạng thái Đã hủy bỏ!" , HttpStatus.BAD_REQUEST),
     
     PATIENT_NOT_FOUND("Không tìm thấy bệnh nhân!", HttpStatus.NOT_FOUND),
+    PATIENT_ALREADY_EXISTS("Bệnh nhân đã tồn tại!", HttpStatus.CONFLICT),
     INSUFFICIENT_BALANCE("Không đủ số dư!", HttpStatus.BAD_REQUEST),
     INSUFFICIENT_STOCK("Sản phẩm đã hết hàng hoặc số lượng mua lớn hơn sản phẩm còn lại!" , HttpStatus.BAD_REQUEST),
 

@@ -35,12 +35,12 @@ public class PatientService {
 
     public Patient getPatientById(Long patientId) {
         return patientRepository.findById(patientId)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.PATIENT_NOT_FOUND));
     }
 
     public Patient addPatient(CreatePatientRequest request) {
         if (patientRepository.existsByCardNumber(request.getCardNumber())) {
-            throw new AppException(ErrorCode.USER_ALREADY_EXISTS);
+            throw new AppException(ErrorCode.PATIENT_ALREADY_EXISTS);
         }
 
 
@@ -83,7 +83,7 @@ public class PatientService {
             existingPatient.setUpdateDate(LocalDateTime.now());
 
             return patientRepository.save(existingPatient);
-        }).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        }).orElseThrow(() -> new AppException(ErrorCode.PATIENT_NOT_FOUND));
     }
 
     private Collection<Department> addDepartmentsByName(Collection<String> departmentNames) {
@@ -103,7 +103,7 @@ public class PatientService {
 
     public void deletePatient(Long patientId) {
         patientRepository.findById(patientId)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.PATIENT_NOT_FOUND));
         patientRepository.deleteById(patientId);
     }
 
@@ -116,7 +116,7 @@ public class PatientService {
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
         return patientRepository.findByCardNumber(name)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.PATIENT_NOT_FOUND));
 
     }
 
@@ -124,11 +124,11 @@ public class PatientService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String cardNumber = authentication.getName();
         return patientRepository.findByCardNumber(cardNumber)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.PATIENT_NOT_FOUND));
     }
     public String loginByCardNumber(String cardNumber) {
         Patient patient = patientRepository.findByCardNumber(cardNumber)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.PATIENT_NOT_FOUND));
         return jwtService.generateToken(patient.getCardNumber());
     }
 

@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -35,38 +36,36 @@ public class AuthController {
     private final JwtUtils jwtUtils;
 
     @PostMapping("/login/user")
-    public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody LoginRequest request,HttpServletRequest httpRequest){
+    public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody LoginRequest request, HttpServletRequest httpRequest) {
         try {
-            if (!userService.isUserExists(request.getUsername())) {
-                return ResponseEntity.status(401)
-                        .body(Map.of("message", "Invalid username or password!"));
-            }
-
-            if (!userService.isUserActive(request.getUsername())) {
-                return ResponseEntity.status(401)
-                        .body(Map.of("message", "Account is inactive. Please contact administrator!"));
-            }
-            Authentication authentication =
-                    authenticationManager
+            // Combine authentication and validation in a single step
+            Authentication authentication = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(
                             request.getUsername(), request.getPassword()));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            String jwt = jwtUtils.generateTokenForUser(authentication);
-            JwtResponse jwtResponse = new JwtResponse(jwt);
-            Map<String, Object> response = new HashMap<>();
 
             UserPrincipal userDetails = (UserPrincipal) authentication.getPrincipal();
-            log.info("User {} logged in", userDetails.getUsername());
-            authentication.getAuthorities().forEach(authority -> log.info(authority.getAuthority()));
 
-            response.put("accessToken", jwtResponse.getAccessToken());
-            //Update Last Login Time and IP
-            updateLastLogin(httpRequest, userDetails.getId());
 
-            return ResponseEntity.ok(response);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = jwtUtils.generateTokenForUser(authentication);
+
+            // Use CompletableFuture to update last login asynchronously
+            CompletableFuture.runAsync(() -> {
+                updateLastLogin(httpRequest, userDetails.getId());
+            });
+
+            // Log asynchronously
+            CompletableFuture.runAsync(() -> {
+                log.info("User {} logged in", userDetails.getUsername());
+                authentication.getAuthorities()
+                        .forEach(authority -> log.info(authority.getAuthority()));
+            });
+
+            return ResponseEntity.ok(Map.of("accessToken", jwt));
+
         } catch (AuthenticationException e) {
             return ResponseEntity.status(401)
-                        .body(Map.of("message", "Invalid username or password!"));
+                    .body(Map.of("message", "Invalid username or password!"));
         }
     }
 
