@@ -180,11 +180,6 @@ public class UserService {
             throw new IllegalArgumentException("Invalid role: " + roleStr);
         }
     }
-
-    public List<User> getAllUsers(){
-        return userRepository.findAllByStatusTrue();
-    }
-
     public List<UserDto> getConvertUsers(List<User> user) {
         return user.stream().map(userMapper::toUserResponse).toList();
     }
@@ -197,15 +192,10 @@ public class UserService {
                 }).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
     }
 
-    public boolean isUserActive(@NotBlank String username) {
-        return userRepository.existsByUsernameAndStatusTrue(username);
-    }
 
     public Page<User> getAllUsersPaginated(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
 
-    public boolean isUserExists(@NotBlank String username) {
-        return userRepository.existsByUsername(username);
-    }
+
 }

@@ -1,7 +1,6 @@
 package com.example.canteen.controller;
 
 import com.example.canteen.dto.request.LoginRequest;
-import com.example.canteen.dto.response.JwtResponse;
 import com.example.canteen.security.jwt.JwtUtils;
 import com.example.canteen.security.user.UserPrincipal;
 import com.example.canteen.service.PatientService;
@@ -38,28 +37,16 @@ public class AuthController {
     @PostMapping("/login/user")
     public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody LoginRequest request, HttpServletRequest httpRequest) {
         try {
-            // Combine authentication and validation in a single step
             Authentication authentication = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(
                             request.getUsername(), request.getPassword()));
 
             UserPrincipal userDetails = (UserPrincipal) authentication.getPrincipal();
 
-
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtUtils.generateTokenForUser(authentication);
 
-            // Use CompletableFuture to update last login asynchronously
-            CompletableFuture.runAsync(() -> {
-                updateLastLogin(httpRequest, userDetails.getId());
-            });
-
-            // Log asynchronously
-            CompletableFuture.runAsync(() -> {
-                log.info("User {} logged in", userDetails.getUsername());
-                authentication.getAuthorities()
-                        .forEach(authority -> log.info(authority.getAuthority()));
-            });
+            updateLastLogin(httpRequest, userDetails.getId());
 
             return ResponseEntity.ok(Map.of("accessToken", jwt));
 
