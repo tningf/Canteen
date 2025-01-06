@@ -19,6 +19,7 @@ import com.example.canteen.service.StockService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/products")
@@ -124,6 +126,7 @@ public class ProductController {
                 List<ImageDto> imageDtos = imageService.saveImages(images, savedProduct.getId());
                 productDto.setImages(imageDtos);
             } catch (RuntimeException e) {
+                log.error("Failed to upload image: {}", e.getMessage());
                 throw new AppException(ErrorCode.FAIL_TO_UPLOAD_IMAGE);
             }
         }

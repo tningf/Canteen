@@ -35,7 +35,7 @@ public class ImageController {
             return ResponseEntity.ok(ApiResponse.builder().message("Upload ảnh thành công!").data(imageDtos).build());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.builder().message(ErrorCode.FAIL_TO_UPLOAD_IMAGE.getMessage()).build());
+                    .body(ApiResponse.builder().message(ErrorCode.FAIL_TO_UPLOAD_IMAGE.getMessage() + e.getMessage()).build());
         }
     }
 
