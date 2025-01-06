@@ -26,10 +26,11 @@ public class DataInitializer implements ApplicationListener<ApplicationReadyEven
     private void createUsersIfNotExists() {
         for (int i = 0; i < 5; i++) {
             String username = "user" + i;
-            if (!userRepository.existsByUsername(username)) {
+            if (Boolean.FALSE.equals(userRepository.existsByUsername(username))) {
                 User user = new User();
                 user.setUsername(username);
                 user.setPassword(passwordEncoder.encode("12345678"));
+                user.setStatus(true);
                 userRepository.save(user);
             }
         }

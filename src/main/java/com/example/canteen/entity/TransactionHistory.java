@@ -25,7 +25,7 @@ public class TransactionHistory {
     @JoinColumn(name = "Patient_ID", nullable = false)
     private Patient patient;
 
-    @Column(name = "TransactionType", columnDefinition = "NVARCHAR(50)")
+    @Column(name = "TransactionType")
     private String transactionType;
 
     @Column(name = "TransactionAmount", nullable = false)

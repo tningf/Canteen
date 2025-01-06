@@ -121,10 +121,16 @@ public class OrderService {
 
     @Transactional
     public OrderDto confirmOrder(Long orderId) {
+        //Check patient balance
+
+
         //Get current user logged in
         String currentUser = userContextService.getCurrentUser();
         //Get order by id and validate
         Order order = getOrderById(orderId);
+        if (!isBalanceEnough(order)) {
+            throw new AppException(ErrorCode.INSUFFICIENT_BALANCE);
+        }
         orderValidator.validateConfirmation(order);
         //Update stock when confirm order
         updateStockForConfirmation(order);
@@ -185,6 +191,11 @@ public class OrderService {
             stock.setQuantity(newQuantity);
             stockRepository.save(stock);
         }
+    }
+
+    public boolean isBalanceEnough(Order order) {
+        return order.getTotalAmount().compareTo(order.getPatient().getPatientBalance().getBalance()) < 0;
+
     }
 
     private void updatePatientBalance(Order order) {

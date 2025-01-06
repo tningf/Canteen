@@ -113,7 +113,7 @@ public class OrderController {
                     .data(order)
                     .build());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.builder()
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.builder()
                     .message("Xác nhận đơn hàng thất bại! " + e.getMessage())
                     .build());
         }

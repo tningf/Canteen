@@ -43,7 +43,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public User createUser(CreateUserRequest request){
-       if (userRepository.existsByUsername(request.getUsername())) {
+       if (Boolean.TRUE.equals(userRepository.existsByUsername(request.getUsername()))) {
            throw new AppException(ErrorCode.USER_ALREADY_EXISTS);
        }
         User user = new User();
