@@ -45,7 +45,7 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtUtils.generateTokenForUser(authentication);
 
-            updateLastLogin(httpRequest, userDetails.getId());
+//            updateLastLogin(httpRequest, userDetails.getId());
 
             return ResponseEntity.ok(Map.of("accessToken", jwt));
 
