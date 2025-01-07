@@ -3,6 +3,7 @@ package com.example.canteen.controller;
 import com.example.canteen.constant.PaginationConstants;
 import com.example.canteen.dto.dtos.UserDto;
 import com.example.canteen.dto.request.CreateUserRequest;
+import com.example.canteen.dto.request.UpdatePasswordRequest;
 import com.example.canteen.dto.request.UserUpdateRequest;
 import com.example.canteen.dto.response.ApiResponse;
 import com.example.canteen.dto.response.PageResponse;
@@ -63,6 +64,16 @@ public class UserController {
         UserDto userDto = userService.updateUser(id, request);
         return ResponseEntity.ok(ApiResponse.builder()
                 .message("User updated successfully!")
+                .data(userDto)
+                .build());
+    }
+
+    @PutMapping("/{id}/update-password")
+    public ResponseEntity<ApiResponse> updatePassword(@PathVariable Long id, @RequestBody UpdatePasswordRequest request) {
+        User user = userService.updatePassword(id, request);
+        UserDto userDto = userMapper.toUserResponse(user);
+        return ResponseEntity.ok(ApiResponse.builder()
+                .message("Password updated successfully!")
                 .data(userDto)
                 .build());
     }

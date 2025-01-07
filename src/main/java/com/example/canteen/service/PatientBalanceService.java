@@ -10,6 +10,7 @@ import com.example.canteen.repository.PatientBalanceRepository;
 import com.example.canteen.repository.PatientRepository;
 import com.example.canteen.repository.TransactionHistoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 

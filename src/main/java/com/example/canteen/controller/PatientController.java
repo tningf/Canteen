@@ -31,7 +31,7 @@ public class PatientController {
     private final PatientMapper patientMapper;
     private final PatientBalanceService patientBalanceService;
 
-
+    @PreAuthorize("hasAnyRole('KETOAN', 'ADMIN', 'NHANVIENBANHANG', 'NHANVIENKHOA')")
     @GetMapping("/all")
     public ResponseEntity<ApiResponse> getAllPatients(
             @RequestParam(defaultValue = PaginationConstants.DEFAULT_PAGE_NUMBER) int page,

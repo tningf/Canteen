@@ -6,6 +6,7 @@ import com.example.canteen.dto.response.ApiResponse;
 import com.example.canteen.service.PatientBalanceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +24,6 @@ public class PatientBalanceController {
                 .data(patientBalance)
                 .build());
     }
-
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse> getBalanceById(@PathVariable Long id) {
         PatientBalanceDto patientBalance = patientBalanceService.getBalanceById(id);

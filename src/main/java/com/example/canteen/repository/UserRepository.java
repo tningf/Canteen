@@ -2,6 +2,8 @@ package com.example.canteen.repository;
 
 import com.example.canteen.entity.User;
 import jakarta.validation.constraints.NotBlank;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,10 +16,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Boolean existsByUsername(String username);
 
-    List<User> findAllByStatusTrue();
-
     boolean existsByUsernameAndStatusTrue(@NotBlank String username);
 
     List<User> id(Long id);
 
+    Page<User> findAllByStatusTrue(Pageable pageable);
 }

@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class OrderController {
     private final OrderService orderService;
     private final OrderMapper orderMapper;
 
+    @PreAuthorize("hasAnyRole('KETOAN', 'ADMIN', 'NHANVIENBANHANG', 'NHANVIENKHOA')")
     @GetMapping("/all")
     public ResponseEntity<ApiResponse> getAllOrders(
             @RequestParam(defaultValue = "0") int page,
@@ -58,6 +60,7 @@ public class OrderController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('KETOAN', 'ADMIN', 'NHANVIENBANHANG', 'NHANVIENKHOA')")
     @GetMapping("/{orderId}/order")
     public ResponseEntity<ApiResponse> getOrderById(@PathVariable Long orderId) {
         try {
@@ -73,6 +76,7 @@ public class OrderController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('KETOAN', 'ADMIN', 'NHANVIENBANHANG', 'NHANVIENKHOA')")
     @GetMapping("/{patientId}/orders")
     public ResponseEntity<ApiResponse> getPatientOrders(@PathVariable Long patientId) {
         try {
@@ -103,7 +107,7 @@ public class OrderController {
                     .build());
         }
     }
-
+    @PreAuthorize("hasAnyRole('KETOAN', 'ADMIN', 'NHANVIENBANHANG', 'NHANVIENKHOA')")
     @PutMapping("/{orderId}/confirm")
     public ResponseEntity<ApiResponse> confirmOrder(@PathVariable Long orderId) {
         try {
@@ -118,7 +122,7 @@ public class OrderController {
                     .build());
         }
     }
-
+    @PreAuthorize("hasAnyRole('KETOAN', 'ADMIN', 'NHANVIENBANHANG', 'NHANVIENKHOA')")
     @PutMapping("/{orderId}/cancel")
     public ResponseEntity<ApiResponse> cancelOrder(@PathVariable Long orderId) {
         try {

@@ -7,6 +7,7 @@ import com.example.canteen.mapper.CartMapper;
 import com.example.canteen.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;

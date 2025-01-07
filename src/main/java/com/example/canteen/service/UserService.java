@@ -2,6 +2,7 @@ package com.example.canteen.service;
 
 import com.example.canteen.dto.dtos.UserDto;
 import com.example.canteen.dto.request.CreateUserRequest;
+import com.example.canteen.dto.request.UpdatePasswordRequest;
 import com.example.canteen.dto.request.UserUpdateRequest;
 import com.example.canteen.entity.Department;
 import com.example.canteen.entity.User;
@@ -42,6 +43,7 @@ public class UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_KETOAN')")
     public User createUser(CreateUserRequest request){
        if (Boolean.TRUE.equals(userRepository.existsByUsername(request.getUsername()))) {
            throw new AppException(ErrorCode.USER_ALREADY_EXISTS);
@@ -93,11 +95,38 @@ public class UserService {
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public User updatePassword(Long id, UpdatePasswordRequest request) {
+        return userRepository.findById(id)
+                .map(user -> {
+                    user.setPassword(passwordEncoder.encode(request.getPassword()));
+                    return userRepository.save(user);
+                }).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_KETOAN')")
+    public void deleteUser(Long id) {
+        boolean isAdmin = SecurityUtils.isCurrentUserAdmin();
+        if (!isAdmin) {
+            User user = userRepository.findById(id)
+                    .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+            checkPermissions(user);
+        }
+        userRepository.findById(id)
+                .map(user -> {
+                    user.setStatus(false);
+                    return userRepository.save(user);
+                }).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+    }
     // Separate input validation
     private void validateInput(Long id, UserUpdateRequest request) {
         if (request == null || id == null) {
             throw new AppException(ErrorCode.INVALID_REQUEST);
         }
+    }
+
+    public boolean isUserActive(@NotBlank String username) {
+        return userRepository.existsByUsernameAndStatusTrue(username);
     }
 
     @Component
@@ -184,17 +213,11 @@ public class UserService {
         return user.stream().map(userMapper::toUserResponse).toList();
     }
 
-    public void deleteUser(Long id) {
-        userRepository.findById(id)
-                .map(user -> {
-                    user.setStatus(false);
-                    return userRepository.save(user);
-                }).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-    }
+
 
 
     public Page<User> getAllUsersPaginated(Pageable pageable) {
-        return userRepository.findAll(pageable);
+        return userRepository.findAllByStatusTrue(pageable);
     }
 
 

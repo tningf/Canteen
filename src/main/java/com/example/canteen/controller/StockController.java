@@ -9,6 +9,7 @@ import com.example.canteen.mapper.StockMapper;
 import com.example.canteen.service.StockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -34,14 +35,14 @@ public class StockController {
         return ResponseEntity.ok(ApiResponse.builder().data(stocks).build());
     }
 
-
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_KETOAN')")
     @PostMapping("/add")
     public ResponseEntity<ApiResponse> addStock(@RequestBody CreateStockRequest request) {
         StockDto stock =  stockService.addStock(request.getProductId(), request.getQuantity());
         return ResponseEntity.ok(ApiResponse.builder().data(stock).build());
     }
 
-
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_KETOAN')")
     @PutMapping("/{id}/update")
     public ResponseEntity<ApiResponse> updateStock(@RequestBody StockUpdateRequest request, @PathVariable Long id) {
         StockDto stock = stockService.updateStock(id, request.getQuantity());

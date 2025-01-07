@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,8 +29,7 @@ public class StatisticsController {
     private final StatisticsDashboardService statisticsDashboardService;
     private final StatisticsProductService statisticsProductService;
 
-
-
+    @PreAuthorize("hasAnyRole('KETOAN', 'ADMIN', 'NHANVIENBANHANG', 'NHANVIENKHOA')")
     @GetMapping("/dashboard")
     public ResponseEntity<ApiResponse> getOrderStatistics(
             @RequestParam(required = false)
@@ -68,7 +68,7 @@ public class StatisticsController {
                             .build());
         }
     }
-
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_KETOAN')")
     @GetMapping("/sale-product")
     public ResponseEntity<ApiResponse> getSaleStatistics(
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
@@ -81,6 +81,7 @@ public class StatisticsController {
                 .build());
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_KETOAN')")
     @GetMapping("/staff-sale-statistics")
     public ResponseEntity<ApiResponse> getStaffSaleStatistics(
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
@@ -93,6 +94,7 @@ public class StatisticsController {
                 .build());
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_KETOAN')")
     @GetMapping("/patient-buy-statistics")
     public ResponseEntity<ApiResponse> getPatientSaleStatistics(
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
@@ -105,6 +107,7 @@ public class StatisticsController {
                 .build());
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_KETOAN')")
     @GetMapping("/department-sale-statistics")
     public ResponseEntity<ApiResponse> getDepartmentSaleStatistics(
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
